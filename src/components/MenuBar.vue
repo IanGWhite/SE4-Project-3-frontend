@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar color="primary" dark flat>
+  <v-app-bar color="darkBlue" dark flat>
     <v-container class="d-flex justify-space-between align-center">
       <div class="d-flex align-center">
         <img src="../assets/logo.png" alt="Logo" class="logo mr-2" />
@@ -7,8 +7,8 @@
       </div>
       
       <div class="menu-buttons">
-        <v-btn color="blue lighten-1" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
-        <v-btn color="blue lighten-1" class="mx-2" @click="navigateTo('info')">Info</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
         <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>
       </div>
     </v-container>
@@ -19,20 +19,20 @@
       right
       temporary
       width="250"
-      color="brown darken-2"
+      color="darkBrown"
       class="drawer"
     >
       <v-list-item>
         <v-list-item-content>
-          <v-btn color="orange lighten-4" class="drawer-btn" @click="navigateTo('studentHome')">Student Home</v-btn>
-          <v-btn color="orange lighten-4" class="drawer-btn" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
+          <v-btn  class="mx-2" @click="navigateTo('studentHome')">Student Home</v-btn>
+          <v-btn   class="mx-2" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
         </v-list-item-content>
       </v-list-item>
       
       <v-divider></v-divider>
       
       <v-list-item>
-        <v-btn color="orange lighten-4" class="drawer-btn" @click="signOut">Sign Out</v-btn>
+        <v-btn  class="drawer-btn" @click="signOut">Sign Out</v-btn>
       </v-list-item>
     </v-navigation-drawer>
   </v-app-bar>

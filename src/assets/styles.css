@@ -1,22 +1,22 @@
 /* General styling */
-body {
+  body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f1e3d1;
+    background-color: "lightBrown";
   }
   
   .container {
     max-width: 500px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: "lightBrown";
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
   }
   
   /* Toolbar styling */
   .v-toolbar {
-    background-color: #0077b6; /* Primary color */
+    background-color: "lightBlue"; /* Primary color */
     color: #ffffff;
     padding: 16px;
   }
@@ -34,15 +34,15 @@ body {
     border-radius: 20px;
     padding: 10px 20px;
     transition: background-color 0.3s;
-    color: #ffffff;
+    color: "lightBlue";
   }
   
   .v-btn.light-blue {
-    background-color: #0077b6;
+    background-color: "lightBlue";
   }
   
   .v-btn.primary {
-    background-color: #023e8a;
+    background-color: "blue";
   }
   
   .v-btn:hover {
@@ -57,18 +57,18 @@ body {
   
   .v-text-field input, .v-textarea textarea {
     padding: 10px;
-    border: 1px solid #cccccc;
+    border: 1px solid "darkBlue";
     border-radius: 4px;
   }
   
   .v-text-field label, .v-textarea label {
-    color: #555555;
+    color: "darkBrown";
   }
   
   /* Container styling */
   .v-container {
     padding: 20px;
-    background-color: #f1e3d1;
+    background-color: "lightBrown";
   }
   
   .text-center {
@@ -92,12 +92,12 @@ body {
   }
   
   .v-table th {
-    background-color: #f4f4f4;
+    background-color: "lightBrown";
     font-weight: bold;
   }
   
   .v-table td {
-    color: #333333;
+    color: "darkBlue";
   }
   
   /* Responsive row layout */
