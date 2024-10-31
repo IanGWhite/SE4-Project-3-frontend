@@ -1,88 +1,81 @@
+<template>
+  <v-app-bar color="primary" dark flat>
+    <v-container class="d-flex justify-space-between align-center">
+      <div class="d-flex align-center">
+        <img src="./assets/logo.png" alt="Logo" class="logo mr-2" />
+        <h1 class="title">Resume Machine</h1>
+      </div>
+      
+      <div class="menu-buttons">
+        <v-btn color="blue lighten-1" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
+        <v-btn color="blue lighten-1" class="mx-2" @click="navigateTo('info')">Info</v-btn>
+        <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>
+      </div>
+    </v-container>
+
+    <!-- Right Drawer -->
+    <v-navigation-drawer
+      v-model="drawer"
+      right
+      temporary
+      width="250"
+      color="brown darken-2"
+      class="drawer"
+    >
+      <v-list-item>
+        <v-list-item-content>
+          <v-btn color="orange lighten-4" class="drawer-btn" @click="navigateTo('studentHome')">Student Home</v-btn>
+          <v-btn color="orange lighten-4" class="drawer-btn" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
+        </v-list-item-content>
+      </v-list-item>
+      
+      <v-divider></v-divider>
+      
+      <v-list-item>
+        <v-btn color="orange lighten-4" class="drawer-btn" @click="signOut">Sign Out</v-btn>
+      </v-list-item>
+    </v-navigation-drawer>
+  </v-app-bar>
+</template>
+
 <script setup>
-import ocLogo from "/oc-logo-white.png";
-import { ref, onMounted } from "vue";
-import Utils from "../config/utils";
-import AuthServices from "../services/authServices";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-const user = ref(null);
-const title = ref("Tutorials");
-const initials = ref("");
-const name = ref("");
-const logoURL = ref("");
+const router = useRouter();
+const drawer = ref(false);
 
-const resetMenu = () => {
-  user.value = null;
-  user.value = Utils.getStore("user");
-  if (user.value) {
-    initials.value = user.value.fName[0] + user.value.lName[0];
-    name.value = user.value.fName + " " + user.value.lName;
-  }
+const toggleDrawer = () => {
+  drawer.value = !drawer.value;
 };
 
-const logout = () => {
-  AuthServices.logoutUser(user.value)
-    .then((response) => {
-      console.log(response);
-      Utils.removeItem("user");
-      $router.push({ name: "login" });
-    })
-    .catch((error) => {
-      console.log("error", error);
-    });
+const navigateTo = (routeName) => {
+  router.push({ name: routeName });
+  drawer.value = false; // Close drawer after navigation
 };
 
-onMounted(() => {
-  logoURL.value = ocLogo;
-  resetMenu();
-});
+const signOut = () => {
+  // Sign out logic here
+  console.log("Sign Out clicked");
+  drawer.value = false; // Close drawer after sign out
+};
 </script>
 
-<template>
-  <div>
-    <v-app-bar app>
-      <router-link :to="{ name: 'tutorials' }">
-        <v-img
-          class="mx-2"
-          :src="logoURL"
-          height="50"
-          width="50"
-          contain
-        ></v-img>
-      </router-link>
-      <v-toolbar-title class="title">
-        {{ title }}
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <div v-if="user">
-        <v-btn class="mx-2" :to="{ name: 'tutorials' }"> List </v-btn>
-        <v-btn class="mx-2" :to="{ name: 'add' }"> Add Tutorial </v-btn>
-      </div>
-      <v-menu bottom min-width="200px" rounded offset-y v-if="user">
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" icon x-large>
-            <v-avatar v-if="user" color="secondary">
-              <span class="accent--text font-weight-bold">{{ initials }}</span>
-            </v-avatar>
-          </v-btn>
-        </template>
-        <v-card>
-          <v-card-text>
-            <div class="mx-auto text-center">
-              <v-avatar color="secondary" class="mt-2 mb-2">
-                <span class="accent--text font-weight-bold">{{
-                  initials
-                }}</span>
-              </v-avatar>
-              <h3>{{ name }}</h3>
-              <p class="text-caption mt-1">
-                {{ user.email }}
-              </p>
-              <v-divider class="my-3"></v-divider>
-              <v-btn depressed rounded text @click="logout"> Logout </v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-menu>
-    </v-app-bar>
-  </div>
-</template>
+<style scoped>
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.menu-buttons .v-btn {
+  border-radius: 12px;
+  color: black;
+}
+
+.drawer .drawer-btn {
+  width: 100%;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: black;
+}
+</style>

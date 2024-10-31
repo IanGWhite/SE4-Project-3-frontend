@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import ProjectServices from "../services/projectServices"; // hypothetical service for managing project data
+import MenuBar from "../components/MenuBar.vue";
 
 const router = useRouter();
 const project = ref({
@@ -32,7 +33,8 @@ const cancel = () => {
 </script>
 
 <template>
-  <div>
+  <v-app>
+    <menu-bar/>
     <v-container>
       <v-card>
         <v-card-title class="text-center">
@@ -95,7 +97,7 @@ const cancel = () => {
         </v-card-text>
       </v-card>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <style scoped>

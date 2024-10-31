@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import ExperienceServices from "../services/experienceServices"; // hypothetical service for managing experience data
+import MenuBar from "../components/MenuBar.vue";
 
 const router = useRouter();
 const experience = ref({
@@ -30,7 +31,8 @@ const cancel = () => {
 </script>
 
 <template>
-  <div>
+  <v-app>
+    <menu-bar/>
     <v-container>
       <v-card>
         <v-card-title class="text-center">
@@ -79,7 +81,7 @@ const cancel = () => {
         </v-card-text>
       </v-card>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <style scoped>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import MenuBar from "../components/MenuBar.vue";
 
 const resumeName = ref("");
 const personalLinks = ref([{ type: "", link: "" }]);
@@ -32,7 +33,8 @@ const saveResume = () => {
 </script>
 
 <template>
-  <div>
+  <v-app>
+    <menu-bar/>
     <v-container>
       <v-card>
         <v-card-title class="text-center">
@@ -116,7 +118,7 @@ const saveResume = () => {
       <!-- Create Button -->
       <v-btn class="mt-4" color="primary" @click="saveResume">Create</v-btn>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <style scoped>

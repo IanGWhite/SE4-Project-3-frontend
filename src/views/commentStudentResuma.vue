@@ -1,79 +1,95 @@
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from "vue";
+import Utils from "../config/utils.js";
+import ResumeService from "../services/resumeService.js";
+import MenuBar from "../components/MenuBar.vue";
 
-// Initialize router and state variables
-const router = useRouter();
-const newComment = ref('');
+const user = Utils.getStore("user");
+const resumeId = 1; // This should be dynamically set, e.g., via route params
+const pdfUrl = "path/to/resume.pdf"; // URL for the PDF
+
 const comments = ref([]);
+const newComment = ref("");
 
-// Method to add a new comment
+const loadComments = () => {
+  ResumeService.getComments(resumeId).then((response) => {
+    comments.value = response.data;
+  }).catch((error) => {
+    console.error("Error loading comments:", error);
+  });
+};
+
 const addComment = () => {
-  if (newComment.value.trim() !== '') {
-    comments.value.push(newComment.value);
-    newComment.value = '';
+  if (newComment.value.trim()) {
+    const comment = {
+      text: newComment.value,
+      user: user.fName + " " + user.lName,
+      date: new Date().toLocaleString()
+    };
+    
+    ResumeService.addComment(resumeId, comment)
+      .then(() => {
+        comments.value.unshift(comment); // Add new comment at the top
+        newComment.value = "";
+      })
+      .catch((error) => {
+        console.error("Error adding comment:", error);
+      });
   }
 };
+
+onMounted(() => {
+  loadComments();
+});
 </script>
 
 <template>
-  <v-container>
-    <!-- Toolbar with Title -->
-    <v-toolbar>
-      <v-toolbar-title class="text-center">
-        Resume Name
-      </v-toolbar-title>
-    </v-toolbar>
+  <v-app>
+    <menu-bar/>
+    <v-container>
+      <v-toolbar>
+        <v-toolbar-title>Resume Name</v-toolbar-title>
+      </v-toolbar>
+      <br />
+      
+      <!-- PDF Viewer -->
+      <v-card class="my-4">
+        <iframe :src="pdfUrl" width="100%" height="600px" style="border: none;"></iframe>
+      </v-card>
 
-    <!-- Resume Box -->
-    <v-card class="mt-5">
-      <v-card-text class="resume-box d-flex align-center justify-center">
-        Resume
-      </v-card-text>
-    </v-card>
+      <!-- Add Comment -->
+      <v-card class="my-4" outlined>
+        <v-card-title>Comment</v-card-title>
+        <v-card-text>
+          <v-textarea
+            v-model="newComment"
+            label="Add a comment"
+            rows="3"
+          ></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="blue" @click="addComment">Submit</v-btn>
+        </v-card-actions>
+      </v-card>
 
-    <!-- Comment Input Section -->
-    <v-row class="mt-5" justify="center">
-      <v-col cols="12" md="8">
-        <v-textarea
-          v-model="newComment"
-          label="Comment"
-          outlined
-          placeholder="Write your comment here..."
-        ></v-textarea>
-      </v-col>
-    </v-row>
-
-    <!-- Add Comment Button -->
-    <v-row justify="center">
-      <v-col cols="12" md="8">
-        <v-btn @click="addComment" color="primary" outlined>
-          Add Comment
-        </v-btn>
-      </v-col>
-    </v-row>
-
-    <!-- Displaying Comments Section -->
-    <v-row class="mt-5" justify="center">
-      <v-col cols="12" md="8">
-        <div v-for="(comment, index) in comments" :key="index" class="mb-3">
-          <v-card>
-            <v-card-text>
-              {{ comment }}
-            </v-card-text>
+      <!-- Display Comments -->
+      <v-card class="my-4" outlined>
+        <v-card-title>Comments</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text v-if="comments.length === 0">No comments available</v-card-text>
+        <v-card-text v-for="(comment, index) in comments" :key="index" class="my-2">
+          <v-card outlined class="p-2">
+            <p><strong>{{ comment.user }}</strong> ({{ comment.date }})</p>
+            <p>{{ comment.text }}</p>
           </v-card>
-        </div>
-      </v-col>
-    </v-row>
-  </v-container>
+        </v-card-text>
+      </v-card>
+    </v-container>
+  </v-app>
 </template>
 
 <style scoped>
-.resume-box {
-  background-color: #a76c42;
-  color: white;
-  height: 400px;
-  font-size: 24px;
-  text-align: center;
+iframe {
+  border-radius: 8px;
 }
 </style>

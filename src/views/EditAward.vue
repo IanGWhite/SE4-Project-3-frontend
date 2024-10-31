@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import AwardServices from "../services/awardServices"; // hypothetical service for managing award data
+import MenuBar from "../components/MenuBar.vue";
 
 const router = useRouter();
 const award = ref({
@@ -30,7 +31,8 @@ const cancel = () => {
 </script>
 
 <template>
-  <div>
+  <v-app>
+    <MenuBar />
     <v-container>
       <v-card>
         <v-card-title class="text-center">
@@ -79,7 +81,7 @@ const cancel = () => {
         </v-card-text>
       </v-card>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <style scoped>

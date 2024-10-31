@@ -2,6 +2,7 @@
 import Utils from "../config/utils.js";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import MenuBar from "../components/MenuBar.vue";
 
 const router = useRouter();
 const user = Utils.getStore("user");
@@ -31,7 +32,8 @@ const createTemplate = () => {
 </script>
 
 <template>
-  <div>
+  <v-app>
+    <menu-bar/>
     <v-container>
       <v-toolbar>
         <v-toolbar-title>
@@ -61,7 +63,7 @@ const createTemplate = () => {
         </div>
       </v-card>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <style scoped>

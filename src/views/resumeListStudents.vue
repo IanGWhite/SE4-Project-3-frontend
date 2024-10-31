@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import MenuBar from "../components/MenuBar.vue";
 
 const students = ref([
   {
@@ -30,6 +31,7 @@ const viewResume = (resume) => {
 </script>
 
 <template>
+  <menu-bar/>
   <v-container>
     <v-card class="mt-3">
       <v-card-title>Students</v-card-title>
@@ -42,15 +44,6 @@ const viewResume = (resume) => {
                 <div class="d-flex align-center">
                   <div>{{ student.name }}</div>
                   <div class="ml-auto d-flex">
-                    <v-btn icon @click="viewStudent(student)">
-                      <v-icon>mdi-comment-text-outline</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="editStudent(student)">
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="deleteStudent(student)">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
                   </div>
                 </div>
               </template>

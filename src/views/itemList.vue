@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import MenuBar from "../components/MenuBar.vue";
 
 const router = useRouter();
 const contactInfo = ref({
@@ -44,9 +45,7 @@ const saveData = () => {
 
 <template>
   <v-container>
-    <v-toolbar flat>
-      <v-toolbar-title>Header goes here</v-toolbar-title>
-    </v-toolbar>
+    <menu-bar/>
 
     <!-- Contact Info Section -->
     <v-card class="mb-6">

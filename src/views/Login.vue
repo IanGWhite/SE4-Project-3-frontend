@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import MenuBar from "../components/MenuBar.vue";
+
 import TutorialServices from "../services/tutorialServices";
 import Utils from "../config/utils.js";
 
@@ -24,11 +26,8 @@ const createAccount = () => {
 
 <template>
   <div>
+    <MenuBar />
     <v-container>
-      <v-toolbar color="primary" dark>
-        <v-toolbar-title>Resume Machine</v-toolbar-title>
-      </v-toolbar>
-
       <v-container class="text-center mt-5">
         <!-- Login and Create Account Buttons -->
         <v-btn color="light-blue" class="mb-4" @click="login">Login</v-btn>

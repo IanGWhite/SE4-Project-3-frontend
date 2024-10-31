@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import EducationServices from "../services/educationServices"; // hypothetical service for managing education data
+import MenuBar from "../components/MenuBar.vue";
 
 const router = useRouter();
 const user = ref(null); // Assuming user info may be needed, similar to your previous example
@@ -34,7 +35,8 @@ const cancel = () => {
 </script>
 
 <template>
-  <div>
+  <v-app>
+    <menu-bar/>
     <v-container>
       <v-card>
         <v-card-title class="text-center">
@@ -106,7 +108,7 @@ const cancel = () => {
         </v-card-text>
       </v-card>
     </v-container>
-  </div>
+  </v-app>
 </template>
 
 <style scoped>

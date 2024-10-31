@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { VExpansionPanels, VExpansionPanel, VExpansionPanelText, VExpansionPanelTitle } from 'vuetify/components';
+import MenuBar from "../components/MenuBar.vue";
 
 const resumes = ref([]);
 
@@ -23,6 +24,7 @@ const editResume = (resume) => {
 
 <template>
   <v-container>
+    <menu-bar/>
     <v-card class="mb-6">
       <v-card-title>Resumes</v-card-title>
       <v-card-text>

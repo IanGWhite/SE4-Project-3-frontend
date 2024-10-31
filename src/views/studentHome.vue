@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import MenuBar from "../components/MenuBar.vue";
 
 const router = useRouter();
 
@@ -19,27 +20,7 @@ const goToAdmin = () => {
 
 <template>
   <v-app>
-    <!-- Navigation Bar -->
-    <v-app-bar app color="primary" dark>
-      <v-toolbar-title>
-        <v-icon left>mdi-clipboard-text</v-icon>
-        Resume Machine
-      </v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <v-btn @click="goToResume" color="secondary" outlined>
-        Resume
-      </v-btn>
-      <v-btn @click="goToInfo" color="secondary" outlined>
-        Info
-      </v-btn>
-
-      <v-avatar size="40" color="brown">
-        <v-icon dark>mdi-account</v-icon>
-      </v-avatar>
-    </v-app-bar>
-
+    <MenuBar />
     <!-- Main Content -->
     <v-container class="fill-height">
       <v-row align="center" justify="center">
@@ -50,7 +31,7 @@ const goToAdmin = () => {
       <v-row align="center" justify="center">
         <v-btn @click="goToResume" color="light-blue" class="mb-5">
           Resume
-        </v-btn>
+        </v-btn> 
       </v-row>
       <v-row align="center" justify="center">
         <v-btn @click="goToAdmin" color="primary" class="mb-5">
