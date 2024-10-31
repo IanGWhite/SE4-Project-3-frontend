@@ -33,7 +33,6 @@ const createTemplate = () => {
 
 <template>
   <v-app>
-    <menu-bar/>
     <v-container>
       <v-toolbar>
         <v-toolbar-title>

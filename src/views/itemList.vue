@@ -45,7 +45,6 @@ const saveData = () => {
 
 <template>
   <v-container>
-    <menu-bar/>
 
     <!-- Contact Info Section -->
     <v-card class="mb-6">

@@ -32,7 +32,6 @@ const cancel = () => {
 
 <template>
   <v-app>
-    <MenuBar />
     <v-container>
       <v-card>
         <v-card-title class="text-center">

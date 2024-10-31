@@ -26,12 +26,16 @@ const createAccount = () => {
 
 <template>
   <div>
-    <MenuBar />
     <v-container>
       <v-container class="text-center mt-5">
-        <!-- Login and Create Account Buttons -->
-        <v-btn color="light-blue" class="mb-4" @click="login">Login</v-btn>
+        <v-row justify="center" class="mt-5">
+      <v-col cols="auto">
+        <v-btn color="light-blue" @click="login">Login</v-btn>
+      </v-col>
+      <v-col cols="auto">
         <v-btn color="primary" @click="createAccount">Create Account</v-btn>
+      </v-col>
+    </v-row>
       </v-container>
     </v-container>
   </div>
@@ -50,5 +54,8 @@ const createAccount = () => {
   width: 150px;
   font-size: 16px;
   border-radius: 20px;
+}
+.button-spacing {
+  margin: 0 10px; /* Adjust margin as needed */
 }
 </style>

@@ -2,7 +2,7 @@
   <v-app-bar color="primary" dark flat>
     <v-container class="d-flex justify-space-between align-center">
       <div class="d-flex align-center">
-        <img src="./assets/logo.png" alt="Logo" class="logo mr-2" />
+        <img src="../assets/logo.png" alt="Logo" class="logo mr-2" />
         <h1 class="title">Resume Machine</h1>
       </div>
       

@@ -45,7 +45,6 @@ onMounted(() => {
 
 <template>
   <v-app>
-    <menu-bar/>
     <v-container>
       <v-toolbar>
         <v-toolbar-title>Resume Name</v-toolbar-title>

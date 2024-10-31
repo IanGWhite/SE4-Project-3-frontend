@@ -20,7 +20,6 @@ const goToAdmin = () => {
 
 <template>
   <v-app>
-    <MenuBar />
 
     <!-- Main Content -->
     <v-container class="fill-height">

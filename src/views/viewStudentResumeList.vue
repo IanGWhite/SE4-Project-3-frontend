@@ -24,7 +24,6 @@ const editResume = (resume) => {
 
 <template>
   <v-container>
-    <menu-bar/>
     <v-card class="mb-6">
       <v-card-title>Resumes</v-card-title>
       <v-card-text>

@@ -34,7 +34,6 @@ const saveResume = () => {
 
 <template>
   <v-app>
-    <menu-bar/>
     <v-container>
       <v-card>
         <v-card-title class="text-center">

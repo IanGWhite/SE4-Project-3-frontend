@@ -31,7 +31,6 @@ const viewResume = (resume) => {
 </script>
 
 <template>
-  <menu-bar/>
   <v-container>
     <v-card class="mt-3">
       <v-card-title>Students</v-card-title>
