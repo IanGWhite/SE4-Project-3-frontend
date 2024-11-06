@@ -1,16 +1,58 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import MenuBar from "../components/MenuBar.vue";
 
 import Utils from "../config/utils.js";
+import AuthServices from "../services/authServices";
 
-const user = ref({
-  fName: "John",
-  lName: "Doe",
-});
 
 const router = useRouter();
+const fName = ref("");
+const lName = ref("");
+const user = ref({});
+
+const loginWithGoogle = () => {
+  window.handleCredentialResponse = handleCredentialResponse;
+  const client = import.meta.env.VITE_APP_CLIENT_ID;
+  console.log(client);
+  window.google.accounts.id.initialize({
+    client_id: client,
+    cancel_on_tap_outside: false,
+    auto_select: true,
+    callback: window.handleCredentialResponse,
+  });
+  window.google.accounts.id.renderButton(document.getElementById("parent_id"), {
+    type: "standard",
+    theme: "outline",
+    size: "large",
+    text: "signup_with",
+    width: 400,
+  });
+};
+
+const handleCredentialResponse = async (response) => {
+  let token = {
+    credential: response.credential,
+  };
+  await AuthServices.loginUser(token)
+    .then((response) => {
+      user.value = response.data;
+      console.log("hiya")
+      Utils.setStore("user", user.value);
+      console.log("Hello")
+      fName.value = user.value.fName;
+      lName.value = user.value.lName;
+      router.push({ name: "tutorials" });
+    })
+    .catch((error) => {
+      console.log("error", error);
+    });
+};
+
+onMounted(() => {
+  loginWithGoogle();
+});
 
 const login = () => {
   console.log("Login clicked");
@@ -29,8 +71,11 @@ const createAccount = () => {
       <v-container class="text-center mt-5 d-flex flex-column align-center">
         <!-- Vertical stack of buttons with spacing -->
          <v-spacer></v-spacer>
-        <v-btn color="lightBlue" class="button-spacing" @click="login">Login</v-btn>
-        <v-btn color="darkBlue" class="button-spacing" @click="createAccount">Create Account</v-btn>
+         <div class="signup-buttons">
+          <v-row justify="center">
+            <div display="flex" id="parent_id"><v-btn color="lightBlue" class="button-spacing" @click="loginWithGoogle">Login</v-btn></div>
+          </v-row>
+        </div>
       </v-container>
     </v-container>
   </v-app>
