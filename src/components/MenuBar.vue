@@ -7,24 +7,25 @@
       </div>
       
       <div class="menu-buttons">
-        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
-        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('ResumeListStudents')">Resume</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('StudentInfo')">Info</v-btn>
         <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>
       </div>
     </v-container>
 
     <!-- Right Drawer -->
     <v-navigation-drawer
-      v-model="drawer"
+      v-model= "drawer"
       right
-      temporary
       width="250"
+      height="auto"
       color="darkBrown"
-      class="drawer"
+      temporary
+      class="user-drawer"
     >
       <v-list-item>
         <v-list-item-content>
-          <v-btn  class="mx-2" @click="navigateTo('studentHome')">Student Home</v-btn>
+          <v-btn  class="mx-2" @click="navigateTo('StudentHome')">Student Home</v-btn>
           <v-btn   class="mx-2" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
         </v-list-item-content>
       </v-list-item>
@@ -72,10 +73,18 @@ const signOut = () => {
   color: black;
 }
 
-.drawer .drawer-btn {
+.drawer-btn {
   width: 100%;
   margin-bottom: 15px;
   font-size: 1.2rem;
   color: black;
 }
+.user-drawer {
+  height: auto; /* Allows the drawer to take up as much vertical space as needed */
+  max-height: 100vh; /* Ensure it doesn't extend beyond the viewport */
+  top: 0; /* Start drawer from the top, independent of the navbar height */
+  position: fixed; /* Keep it fixed relative to the viewport */
+  z-index: 1000; /* Ensures it’s above other components when open */
+}
+
 </style>

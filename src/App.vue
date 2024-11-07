@@ -7,8 +7,14 @@ import MenuBar from "./components/MenuBar.vue";
 <template>
   <v-app>
     <MenuBar :key="$route.fullPath" />
-    <v-main>
+    <v-main class="padded-content">
       <router-view />
     </v-main>
   </v-app>
 </template>
+
+<style scoped>
+.padded-content {
+  padding-top: 100px
+}
+</style>
