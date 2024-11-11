@@ -40,9 +40,9 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+//import { useRouter } from "vue-router";
 
-const router = useRouter();
+//const router = useRouter();
 const drawer = ref(false);
 
 const toggleDrawer = () => {
@@ -50,7 +50,7 @@ const toggleDrawer = () => {
 };
 
 const navigateTo = (routeName) => {
-  router.push({ name: routeName });
+  $router.push({ name: routeName });
   drawer.value = false; // Close drawer after navigation
 };
 
