@@ -6,12 +6,12 @@
         <h1 class="title">Resume Machine</h1>
       </div>
       
-      <div class="menu-buttons">
+     <!-- <div class="menu-buttons">
         <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
         <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
         <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>
       </div>
-    </v-container>
+    </v-container>-->
 
     <!-- Right Drawer -->
     <!--<v-navigation-drawer
