@@ -14,7 +14,7 @@
     </v-container>
 
     <!-- Right Drawer -->
-    <v-navigation-drawer
+    <!--<v-navigation-drawer
       v-model="drawer"
       right
       temporary
@@ -34,7 +34,7 @@
       <v-list-item>
         <v-btn  class="drawer-btn" @click="signOut">Sign Out</v-btn>
       </v-list-item>
-    </v-navigation-drawer>
+    </v-navigation-drawer>-->
   </v-app-bar>
 </template>
 
