@@ -6,7 +6,7 @@ import MenuBar from "./components/MenuBar.vue";
 
 <template>
   <v-app>
-    <MenuBar :key="$route.fullPath" />
+    <!--<MenuBar :key="$route.fullPath" />-->
     <v-main>
       <router-view />
     </v-main>
