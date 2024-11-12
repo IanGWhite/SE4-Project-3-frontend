@@ -1,20 +1,20 @@
 <template>
   <v-app-bar color="darkBlue" dark flat>
-    <!--<v-container class="d-flex justify-space-between align-center">
+    <v-container class="d-flex justify-space-between align-center">
       <div class="d-flex align-center">
         <img src="../assets/logo.png" alt="Logo" class="logo mr-2" />
         <h1 class="title">Resume Machine</h1>
       </div>
-      
+      <!--
       <div class="menu-buttons">
         <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
         <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
         <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>
-      </div>
-    </v-container>-->
+      </div>-->
+    </v-container>
 
     <!-- Right Drawer -->
-    <!--<v-navigation-drawer
+    <v-navigation-drawer
       v-model="drawer"
       right
       temporary
@@ -34,7 +34,7 @@
       <v-list-item>
         <v-btn  class="drawer-btn" @click="signOut">Sign Out</v-btn>
       </v-list-item>
-    </v-navigation-drawer>-->
+    </v-navigation-drawer>
   </v-app-bar>
 </template>
 
