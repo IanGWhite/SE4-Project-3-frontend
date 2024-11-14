@@ -24,17 +24,12 @@ const goToAdmin = () => {
     <!-- Main Content -->
     <v-container class="fill-height">
       <v-row align="center" justify="center">
-        <v-btn @click="goToInfo" color="light-blue" class="mb-5">
-          Info
-        </v-btn>
-      </v-row>
-      <v-row align="center" justify="center">
         <v-btn @click="goToResume" color="light-blue" class="mb-5">
-          Resume
+          Resume List
         </v-btn>
       </v-row>
       <v-row align="center" justify="center">
-        <v-btn @click="goToAdmin" color="primary" class="mb-5">
+        <v-btn @click="goToAdmin" color="light-blue"  class="mb-5">
           Admin
         </v-btn>
       </v-row>

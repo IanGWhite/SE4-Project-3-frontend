@@ -6,6 +6,7 @@ const resumeName = ref("");
 const personalLinks = ref([{ type: "", link: "" }]);
 const professionalSummary = ref("");
 const sections = ref({
+  personalLink: [{ name: "link 1", checked: false }],
   education: [{ name: "School 1", checked: false }],
   experience: [{ name: "Company 1", checked: false }],
   projects: [{ name: "Project 1", checked: false }],
@@ -13,10 +14,6 @@ const sections = ref({
   interests: [{ name: "Interest 1", checked: false }],
   awards: [{ name: "Award 1", checked: false }],
 });
-
-const addPersonalLink = () => {
-  personalLinks.value.push({ type: "", link: "" });
-};
 
 const addSectionItem = (sectionKey) => {
   sections.value[sectionKey].push({ name: "", checked: false });
@@ -46,40 +43,11 @@ const saveResume = () => {
             outlined
             dense
           ></v-text-field>
-          <v-btn @click="saveResume" color="primary">Save</v-btn>
         </v-card-text>
       </v-card>
 
-      <!-- Personal Links Section -->
-      <v-card class="mt-3">
-        <v-card-title>Personal Links</v-card-title>
-        <v-card-text>
-          <div v-for="(link, index) in personalLinks" :key="index">
-            <v-row>
-              <v-col cols="5">
-                <v-text-field
-                  v-model="link.type"
-                  label="Type (GitHub, Social)"
-                  dense
-                  outlined
-                ></v-text-field>
-              </v-col>
-              <v-col cols="7">
-                <v-text-field
-                  v-model="link.link"
-                  label="Link"
-                  dense
-                  outlined
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </div>
-          <v-btn @click="addPersonalLink" color="primary">Add Link</v-btn>
-        </v-card-text>
-      </v-card>
-
-      <!-- Professional Summary Section -->
-      <v-card class="mt-3">
+       <!-- Professional Summary Section -->
+       <v-card class="mt-3">
         <v-card-title>Professional Summary</v-card-title>
         <v-card-text>
           <v-textarea
@@ -107,9 +75,6 @@ const saveResume = () => {
                 ></v-text-field>
               </v-row>
             </div>
-            <v-btn @click="addSectionItem(sectionKey)" color="primary">
-              Add {{ sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1, -1) }}
-            </v-btn>
           </v-card-text>
         </v-card>
       </template>
