@@ -7,15 +7,15 @@
       </div>
       
       <div class="menu-buttons">
-        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('ResumeListStudents')">Resume</v-btn>
-        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('StudentInfo')">Info</v-btn>
-        <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>
+        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
+        <!--<v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>-->
       </div>
     </v-container>
 
     <!-- Right Drawer -->
-    <v-navigation-drawer
-      v-model= "drawer"
+    <!--<v-navigation-drawer
+      v-model="drawer"
       right
       width="250"
       height="auto"
@@ -35,15 +35,15 @@
       <v-list-item>
         <v-btn  class="drawer-btn" @click="signOut">Sign Out</v-btn>
       </v-list-item>
-    </v-navigation-drawer>
+    </v-navigation-drawer>-->
   </v-app-bar>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+//import { useRouter } from "vue-router";
 
-const router = useRouter();
+//const router = useRouter();
 const drawer = ref(false);
 
 const toggleDrawer = () => {
@@ -51,7 +51,7 @@ const toggleDrawer = () => {
 };
 
 const navigateTo = (routeName) => {
-  router.push({ name: routeName });
+  $router.push({ name: routeName });
   drawer.value = false; // Close drawer after navigation
 };
 

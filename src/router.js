@@ -3,15 +3,15 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "./views/Login.vue";
 
 import AddAward from "./views/AddAward.vue";
-import EditAward from "./views/editAward.vue";
+import EditAward from "./views/EditAward.vue";
 import AddEducation from "./views/AddEducation.vue";
 import EditEducation from "./views/EditEducation.vue";
-import AddExperience from "./views/addExperience.vue";
+import AddExperience from "./views/AddExperience.vue";
 import EditExperience from "./views/EditExperience.vue";
 import AddProject from "./views/AddProject.vue";
 import EditProject from "./views/EditProject.vue"
 import CreateResume from "./views/createResume.vue";
-import EditResume from "./views/editResume.vue";
+import EditResume from "./views/EditResume.vue";
 import ChooseTemplete from "./views/chooseTemplete.vue";
 import ItemList from "./views/itemList.vue";
 import ResumeListStudents from "./views/resumeListStudents.vue";
