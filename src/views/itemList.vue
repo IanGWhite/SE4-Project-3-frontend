@@ -12,12 +12,8 @@ const contactInfo = ref({
   email: ""
 });
 const personalLinks = ref([{ type: "", link: "" }]);
-const professionalSummary = ref("");
-const experience = ref([{ work: "" }]);
-const projects = ref([{ project: "" }]);
-const skills = ref([""]);
-const interests = ref([""]);
-const awards = ref([{ award: "" }]);
+const skills = ref([{skill :""}]);
+const interests = ref([{interest: ""}]);
 
 const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); // this will be the code to add to the database
 const addEducation = () => router.push({ name: 'addEducation' });
@@ -26,8 +22,8 @@ const addExperience = () => router.push({ name: 'AddExperience' });
 const editExperience = () => router.push({ name: 'EditExperience' });
 const addProject = () => router.push({ name: 'AddProject' });
 const editProject = () => router.push({ name: 'EditProject' });
-const addSkill = () => router.push({ name: 'addEducation' }); // this will be the code to add to the database
-const addInterest = () => router.push({ name: 'addEducation' }); // this will be the code to add to the database
+const addSkill = () => skills.value.push({ skill: ""}); // this will be the code to add to the database
+const addInterest = () => interests.value.push({ interest: ""}); // this will be the code to add to the database
 const addAward = () => router.push({ name: 'AddAward' });
 const editAward = () => router.push({ name: 'EditAward' });
 const saveData = () => {
@@ -49,7 +45,7 @@ const saveData = () => {
         <v-text-field v-model="contactInfo.email" label="E-mail" />
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" @click="saveData">Save</v-btn>
+        <v-btn color="blue" @click="saveData">Save</v-btn>
       </v-card-actions>
     </v-card>
 
@@ -70,11 +66,11 @@ const saveData = () => {
             </v-btn>
           </v-col>
         </v-row>
-        <v-btn color="primary" text @click="addPersonalLink">+ Add Link</v-btn>
+        <v-btn color="blue" text @click="addPersonalLink">+ Add Link</v-btn>
       </v-card-text>
     </v-card>
 
-    <v-card>
+    <v-card class="mb-6">
       <v-card-title>Education</v-card-title>
       <v-card-text>
         <v-row >
@@ -94,7 +90,7 @@ const saveData = () => {
       </v-card-text>
     </v-card>
 
-    <v-card>
+    <v-card class="mb-6">
     <v-card-title>Experience</v-card-title>
     <v-card-text>
       <v-row >
@@ -114,7 +110,7 @@ const saveData = () => {
     </v-card-text>
   </v-card>
 
-  <v-card>
+  <v-card class="mb-6">
     <v-card-title>Project</v-card-title>
     <v-card-text>
       <v-row >
@@ -138,11 +134,8 @@ const saveData = () => {
     <v-card-title>Skills</v-card-title>
     <v-card-text>
       <v-row v-for="(link, index) in skills" :key="index">
-        <v-col cols="5">
-          <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
-        </v-col>
-        <v-col cols="5">
-          <v-text-field v-model="link.link" label="Link" />
+        <v-col cols="10">
+          <v-text-field v-model="link.type" label="Skill" />
         </v-col>
         <v-col cols="2">
           <v-btn icon @click="skills.splice(index, 1)">
@@ -150,7 +143,7 @@ const saveData = () => {
           </v-btn>
         </v-col>
       </v-row>
-      <v-btn color="primary" text @click="addSkill">+ Add Link</v-btn>
+      <v-btn color="blue" text @click="addSkill">+ Add Skill</v-btn>
     </v-card-text>
   </v-card>
 
@@ -158,11 +151,8 @@ const saveData = () => {
     <v-card-title>Interests</v-card-title>
     <v-card-text>
       <v-row v-for="(link, index) in interests" :key="index">
-        <v-col cols="5">
-          <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
-        </v-col>
-        <v-col cols="5">
-          <v-text-field v-model="link.link" label="Link" />
+        <v-col cols="10">
+          <v-text-field v-model="link.type" label="Interests" />
         </v-col>
         <v-col cols="2">
           <v-btn icon @click="interests.splice(index, 1)">
@@ -170,12 +160,12 @@ const saveData = () => {
           </v-btn>
         </v-col>
       </v-row>
-      <v-btn color="primary" text @click="addInterest">+ Add Link</v-btn>
+      <v-btn color="blue" text @click="addInterest">+ Add Interest</v-btn>
     </v-card-text>
   </v-card>
 
 
-  <v-card>
+  <v-card class="mb-6">
     <v-card-title>Award</v-card-title>
     <v-card-text>
       <v-row >

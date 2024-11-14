@@ -30,8 +30,8 @@ const router = createRouter({
       component: Login,
     },
     {
-      path: "/addAward",
-      name: "addAward",
+      path: "/AddAward",
+      name: "AddAward",
       component: AddAward,
     },
     {
