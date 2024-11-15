@@ -1,3 +1,20 @@
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+import logoutUser from "../services/authServices";
+import Utils from "../config/utils.js";
+import AuthServices from "../services/authServices";
+
+const router = useRouter();
+const drawer = ref(false); 
+
+
+const goToResume = () => router.push({ name: 'ResumeListStudents' });
+const goToInfo = () => router.push({ name: 'StudentInfo' });
+
+</script>
+
 <template>
   <v-app-bar color="darkBlue" dark flat>
     <v-container class="d-flex justify-space-between align-center">
@@ -7,8 +24,8 @@
       </div>
       
       <div class="menu-buttons">
-        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
-        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="goToResume">Resume</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="goToInfo">Info</v-btn>
 
         <!-- <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar> -->
       </div>
@@ -20,8 +37,8 @@
       <v-list>
         <v-list-item>
         <v-list-item-content style="width: auto; overflow: visible;">
-          <v-btn  class="drop-btn" @click="navigateTo('studentHome')">Student Home</v-btn>
-          <v-btn   class="drop-btn" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
+          <v-btn  class="drop-btn" @click="navigateTo('StudentHome')">Student Home</v-btn>
+          <v-btn   class="drop-btn" @click="navigateTo('TeacherHome')">Teacher Home</v-btn>
           <v-btn  class="drop-btn" @click="signOut">Sign Out</v-btn>
         </v-list-item-content>
       </v-list-item>
@@ -30,29 +47,6 @@
 
   </v-app-bar>
 </template>
-
-<script setup>
-import { ref } from "vue";
-//import { useRouter } from "vue-router";
-
-//const router = useRouter();
-const drawer = ref(false);
-
-
-const goToResume = () => router.push({ name: 'ResumeListStudents' });
-const goToInfo = () => router.push({ name: 'ItemList' });
-
-const navigateTo = (routeName) => {
-  $router.push({ name: routeName });
-  drawer.value = false; // Close drawer after navigation
-};
-
-const signOut = () => {
-  // Sign out logic here
-  console.log("Sign Out clicked");
-  drawer.value = false; // Close drawer after sign out
-};
-</script>
 
 <style scoped>
 .title {
