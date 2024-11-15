@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import MenuBar from "../components/MenuBar.vue";
+import linkServices from "../services/linkServices";
 
 const router = useRouter();
 const contactInfo = ref({
@@ -11,6 +11,7 @@ const contactInfo = ref({
   state: "",
   email: ""
 });
+
 const personalLinks = ref([{ type: "", link: "" }]);
 const skills = ref([{skill :""}]);
 const interests = ref([{interest: ""}]);
@@ -26,9 +27,29 @@ const addSkill = () => skills.value.push({ skill: ""}); // this will be the code
 const addInterest = () => interests.value.push({ interest: ""}); // this will be the code to add to the database
 const addAward = () => router.push({ name: 'AddAward' });
 const editAward = () => router.push({ name: 'EditAward' });
-const saveData = () => {
-  //saves all data to database
+const savePersonalLink = (index) => {
+  const data = {
+    type: personalLinks.value[index].type,
+    link: personalLinks.value[index].link,
+  };
+  linkServices.createAward(student.studentId, data)
+    .then((response) => {
+      personalLinks.value[index].id = response.data.id;
+      console.log("Added:", response.data);
+      //router.push({ name: "tutorials" });
+    })
+    .catch((e) => {
+      console.error(e.response.data.message);
+    });
 };
+
+const deleteLink = () => {
+  personalLinks.splice(index, 1);
+
+}
+
+
+
 </script>
 
 <template>
@@ -55,15 +76,17 @@ const saveData = () => {
       <v-card-text>
         <v-row v-for="(link, index) in personalLinks" :key="index">
           <v-col cols="5">
-            <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
+            <v-text-field v-model="personalLinks.type" label="Type (GitHub, Social)" />
           </v-col>
           <v-col cols="5">
-            <v-text-field v-model="link.link" label="Link" />
+            <v-text-field v-model="personalLinks.link" label="Link" />
           </v-col>
           <v-col cols="2">
-            <v-btn icon @click="personalLinks.splice(index, 1)">
+            <v-btn icon @click="deleteLink(index)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
+            <v-btn icon @click="savePersonalLink(index)">
+              Save </v-btn>
           </v-col>
         </v-row>
         <v-btn color="blue" text @click="addPersonalLink">+ Add Link</v-btn>

@@ -7,35 +7,13 @@
       </div>
       
       <div class="menu-buttons">
-        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
-        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="goToResume()">Resume</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="goToInfo()">Info</v-btn>
         <!--<v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>-->
       </div>
     </v-container>
 
-    <!-- Right Drawer -->
-    <!--<v-navigation-drawer
-      v-model="drawer"
-      right
-      width="250"
-      height="auto"
-      color="darkBrown"
-      temporary
-      class="user-drawer"
-    >
-      <v-list-item>
-        <v-list-item-content>
-          <v-btn  class="mx-2" @click="navigateTo('StudentHome')">Student Home</v-btn>
-          <v-btn   class="mx-2" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
-        </v-list-item-content>
-      </v-list-item>
-      
-      <v-divider></v-divider>
-      
-      <v-list-item>
-        <v-btn  class="drawer-btn" @click="signOut">Sign Out</v-btn>
-      </v-list-item>
-    </v-navigation-drawer>-->
+    
   </v-app-bar>
 </template>
 
@@ -49,6 +27,9 @@ const drawer = ref(false);
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
 };
+
+const goToResume = () => router.push({ name: 'ResumeListStudents' });
+const goToInfo = () => router.push({ name: 'ItemList' });
 
 const navigateTo = (routeName) => {
   $router.push({ name: routeName });
