@@ -5,4 +5,6 @@ import vuetify from "./plugins/vuetify.js";
 import './assets/styles.css';
 
 
+
 createApp(App).use(vuetify).use(router).mount("#app");
+createApp(App).use(vuetify, {iconfont: 'mdi'});

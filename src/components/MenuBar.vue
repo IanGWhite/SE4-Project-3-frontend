@@ -14,17 +14,15 @@
     </v-container>
     <v-menu>
       <template v-slot:activator="{ props }">
-        <v-btn icon="$vuetify" v-bind="props"> Acti </v-btn>
+        <v-btn icon="$menu" v-bind="props"></v-btn>
       </template>
       <v-list>
         <v-list-item>
-        <v-list-item-content>
-          <v-btn  class="mx-2" @click="navigateTo('studentHome')">Student Home</v-btn>
-          <v-btn   class="mx-2" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
+        <v-list-item-content style="width: auto; overflow: visible;">
+          <v-btn  class="drop-btn" @click="navigateTo('studentHome')">Student Home</v-btn>
+          <v-btn   class="drop-btn" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
+          <v-btn  class="drop-btn" @click="signOut">Sign Out</v-btn>
         </v-list-item-content>
-      </v-list-item>
-      <v-list-item>
-        <v-btn  class="drawer-btn" @click="signOut">Sign Out</v-btn>
       </v-list-item>
       </v-list>
     </v-menu>
@@ -58,14 +56,27 @@ const signOut = () => {
 }
 
 .menu-buttons .v-btn {
-  border-radius: 12px;
+  /* border-radius: 12px; */
   color: black;
+  height: 100%;
+  margin: 0;
+  border:none;
 }
 
-.drawer .drawer-btn {
-  width: 100%;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-  color: black;
+.drop-btn
+{
+  border-radius: 0;
+  box-sizing: border-box;
+  margin: 0;
+  border:none;
+  display: block;
 }
+.v-list {
+  padding: 0; /* Remove unnecessary padding from list */
+}
+
+.v-list-item-content {
+  overflow: visible;
+}
+
 </style>
