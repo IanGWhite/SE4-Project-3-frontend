@@ -9,33 +9,25 @@
       <div class="menu-buttons">
         <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
         <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
-        <!--<v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar>-->
+
+        <!-- <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar> -->
       </div>
     </v-container>
-
-    <!-- Right Drawer -->
-    <!--<v-navigation-drawer
-      v-model="drawer"
-      right
-      width="250"
-      height="auto"
-      color="darkBrown"
-      temporary
-      class="user-drawer"
-    >
-      <v-list-item>
-        <v-list-item-content>
-          <v-btn  class="mx-2" @click="navigateTo('StudentHome')">Student Home</v-btn>
-          <v-btn   class="mx-2" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-btn icon="$menu" v-bind="props"></v-btn>
+      </template>
+      <v-list>
+        <v-list-item>
+        <v-list-item-content style="width: auto; overflow: visible;">
+          <v-btn  class="drop-btn" @click="navigateTo('studentHome')">Student Home</v-btn>
+          <v-btn   class="drop-btn" @click="navigateTo('teacherHome')">Teacher Home</v-btn>
+          <v-btn  class="drop-btn" @click="signOut">Sign Out</v-btn>
         </v-list-item-content>
       </v-list-item>
-      
-      <v-divider></v-divider>
-      
-      <v-list-item>
-        <v-btn  class="drawer-btn" @click="signOut">Sign Out</v-btn>
-      </v-list-item>
-    </v-navigation-drawer>-->
+      </v-list>
+    </v-menu>
+
   </v-app-bar>
 </template>
 
@@ -46,9 +38,6 @@ import { ref } from "vue";
 //const router = useRouter();
 const drawer = ref(false);
 
-const toggleDrawer = () => {
-  drawer.value = !drawer.value;
-};
 
 const navigateTo = (routeName) => {
   $router.push({ name: routeName });
@@ -69,22 +58,29 @@ const signOut = () => {
 }
 
 .menu-buttons .v-btn {
-  border-radius: 12px;
+  /* border-radius: 12px; */
   color: black;
+  height: 100%;
+  margin: 0;
+  border:none;
 }
 
-.drawer-btn {
-  width: 100%;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-  color: black;
+
+.drop-btn
+{
+  border-radius: 0;
+  box-sizing: border-box;
+  margin: 0;
+  border:none;
+  display: block;
 }
-.user-drawer {
-  height: auto; /* Allows the drawer to take up as much vertical space as needed */
-  max-height: 100vh; /* Ensure it doesn't extend beyond the viewport */
-  top: 0; /* Start drawer from the top, independent of the navbar height */
-  position: fixed; /* Keep it fixed relative to the viewport */
-  z-index: 1000; /* Ensures it’s above other components when open */
+.v-list {
+  padding: 0; /* Remove unnecessary padding from list */
+}
+
+.v-list-item-content {
+  overflow: visible;
 }
 
 </style>
+
