@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
 import MenuBar from "../components/MenuBar.vue";
+import jsPDF from 'jspdf';
+import Utils from "../config/utils.js";
 
 const resumeName = ref("");
 const personalLinks = ref([{ type: "", link: "" }]);
@@ -15,6 +17,7 @@ const sections = ref({
   awards: [{ name: "Award 1", checked: false }],
 });
 
+
 const addSectionItem = (sectionKey) => {
   sections.value[sectionKey].push({ name: "", checked: false });
 };
@@ -26,6 +29,22 @@ const saveResume = () => {
     professionalSummary,
     sections
   });
+  generateResume1();
+};
+
+const generateResume1 = () => {
+  var doc = new jsPDF();
+  var pageWidth = doc.internal.pageSize.getWidth(); 
+  var pageHeight = doc.internal.pageSize.getHeight();
+  var pageCenter = pageWidth/2
+
+  doc.text('Hello world!', 10, 10)
+  doc.text(resumeName.value, 10, 10, {});
+  doc.setFontSize(12);
+  var splitSummary = doc.splitTextToSize(professionalSummary.value, pageWidth-10);
+  doc.text(splitSummary, pageCenter, 40, {align: "center"})
+  //doc.text(professionalSummary.value, pageWidth/2, 40, {align: "center"});
+  doc.output('dataurlnewwindow');
 };
 </script>
 
@@ -33,7 +52,7 @@ const saveResume = () => {
   <v-app>
     <v-container>
       <v-card>
-        <v-card-title class="text-center">
+        <v-card-title>
           Resume Name
         </v-card-title>
         <v-card-text>
