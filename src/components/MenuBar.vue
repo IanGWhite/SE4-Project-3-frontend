@@ -9,6 +9,7 @@
       <div class="menu-buttons">
         <v-btn color="lightBlue" class="mx-2" @click="navigateTo('resume')">Resume</v-btn>
         <v-btn color="lightBlue" class="mx-2" @click="navigateTo('info')">Info</v-btn>
+
         <!-- <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar> -->
       </div>
     </v-container>
@@ -26,19 +27,20 @@
       </v-list-item>
       </v-list>
     </v-menu>
+
   </v-app-bar>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+//import { useRouter } from "vue-router";
 
-const router = useRouter();
+//const router = useRouter();
 const drawer = ref(false);
 
 
 const navigateTo = (routeName) => {
-  router.push({ name: routeName });
+  $router.push({ name: routeName });
   drawer.value = false; // Close drawer after navigation
 };
 
@@ -63,6 +65,7 @@ const signOut = () => {
   border:none;
 }
 
+
 .drop-btn
 {
   border-radius: 0;
@@ -80,3 +83,4 @@ const signOut = () => {
 }
 
 </style>
+

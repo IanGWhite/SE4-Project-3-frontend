@@ -6,15 +6,15 @@ import MenuBar from "../components/MenuBar.vue";
 const router = useRouter();
 
 const goToResume = () => {
-  router.push({ name: 'resume' });
+  router.push({ name: 'ResumeListStudents' });
 };
 
 const goToInfo = () => {
-  router.push({ name: 'info' });
+  router.push({ name: 'StudentInfo' });
 };
 
 const goToAdmin = () => {
-  router.push({ name: 'admin' });
+  router.push({ name: 'TeacherHome' });
 };
 </script>
 
@@ -33,7 +33,7 @@ const goToAdmin = () => {
         </v-btn> 
       </v-row>
       <v-row align="center" justify="center">
-        <v-btn @click="goToAdmin" color="primary" class="mb-5">
+        <v-btn @click="goToAdmin" color="light-blue"  class="mb-5">
           Admin
         </v-btn>
       </v-row>
