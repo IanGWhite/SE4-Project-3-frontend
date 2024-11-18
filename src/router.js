@@ -90,8 +90,8 @@ const router = createRouter({
       component: ChooseTemplete,
     },
     {
-      path: "/ResumeDate",
-      name: "ResumeDate",
+      path: "/StudentInfo",
+      name: "StudentInfo",
       component: ItemList,
       props: true,
     },

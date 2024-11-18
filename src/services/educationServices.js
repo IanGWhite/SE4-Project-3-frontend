@@ -1,19 +1,26 @@
 import apiClient from "./services.js";
 
 export default {
-  getAllEducations(tutorialId) {
-    return apiClient.get(`/tutorials/${tutorialId}/educations`);
+  getAllEducations(studentId) {
+    return apiClient.get(`/students/${studentId}/educations`);
   },
-  getEducations(tutorialId, id) {
-    return apiClient.get(`/tutorials/${tutorialId}/educations/${id}`);
+  getEducations(studentId, id) {
+    return apiClient.get(`/students/${studentId}/educations/${id}`);
   },
-  createEducation(tutorialId, data) {
-    return apiClient.post(`/tutorials/${tutorialId}/educations`, data);
+  createEducation(studentId, data) {
+    return apiClient.post(`/students/${studentId}/educations`, data);
   },
-  updateEducation(tutorialId, id, data) {
-    return apiClient.put(`/tutorials/${tutorialId}/educations/${id}`, data);
+  updateEducation(studentId, id, data) {
+    return apiClient.put(`/students/${studentId}/educations/${id}`, data);
   },
-  deleteEducation(tutorialId, id) {
-    return apiClient.delete(`/tutorials/${tutorialId}/educations/${id}`);
+  deleteEducation(studentId, id) {
+    return apiClient.delete(`/students/${studentId}/educations/${id}`);
   },
 };
+
+//in the controller for experience
+//get a function for getting a student from a user id
+//when you log in, use the user id to get the student 
+//login { student = studentservices.getstudent for user
+// user.studentId = studentId}
+//add user to store
