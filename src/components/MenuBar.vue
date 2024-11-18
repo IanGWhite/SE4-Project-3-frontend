@@ -13,6 +13,23 @@ const drawer = ref(false);
 const goToResume = () => router.push({ name: 'ResumeListStudents' });
 const goToInfo = () => router.push({ name: 'StudentInfo' });
 
+const logout = async (response) => {
+  let token = {
+    credential: response.credential,
+  };
+  await AuthServices.logoutUser(token)
+    .then(() => {
+      router.push({ name: "login" });
+    })
+    .catch((error) => {
+      console.log("error", error);
+    });
+};
+
+const navigateTo = (routeName) => {
+  router.push({ name: routeName });
+  drawer.value = false; //Close drawer after navigation
+};
 </script>
 
 <template>

@@ -32,7 +32,7 @@ const savePersonalLink = (index) => {
     type: personalLinks.value[index].type,
     link: personalLinks.value[index].link,
   };
-  linkServices.createAward(student.studentId, data)
+  linkServices.createLink(student.studentId, data)
     .then((response) => {
       personalLinks.value[index].id = response.data.id;
       console.log("Added:", response.data);
@@ -47,8 +47,6 @@ const deleteLink = () => {
   personalLinks.splice(index, 1);
 
 }
-
-
 
 </script>
 
