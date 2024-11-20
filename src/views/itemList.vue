@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import linkServices from "../services/linkServices";
 
 const router = useRouter();
+const user = ref({});
 const contactInfo = ref({
   firstName: "",
   lastName: "",
@@ -16,7 +17,7 @@ const personalLinks = ref([{ type: "", link: "" }]);
 const skills = ref([{skill :""}]);
 const interests = ref([{interest: ""}]);
 
-const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); // this will be the code to add to the database
+const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
 const addEducation = () => router.push({ name: 'addEducation' });
 const editEducation = () => router.push({ name: 'EditEducation' });
 const addExperience = () => router.push({ name: 'AddExperience' });
@@ -32,7 +33,7 @@ const savePersonalLink = (index) => {
     type: personalLinks.value[index].type,
     link: personalLinks.value[index].link,
   };
-  linkServices.createLink(student.studentId, data)
+  linkServices.createLink(user.value.studentId, data)
     .then((response) => {
       personalLinks.value[index].id = response.data.id;
       console.log("Added:", response.data);
