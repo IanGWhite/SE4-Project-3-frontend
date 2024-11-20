@@ -1,7 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import MenuBar from "../components/MenuBar.vue";
+import Education from "../services/educationServices.js";
+import StudentServices from "../services/studentServices.js";
+import Utils from "../config/utils.js";
+
+const user = ref({});
 
 const router = useRouter();
 const contactInfo = ref({
@@ -13,7 +18,7 @@ const contactInfo = ref({
 });
 const personalLinks = ref([{ type: "", link: "" }]);
 const professionalSummary = ref("");
-const education = ref([{ school: "" }]);
+const education = ref([]);
 const experience = ref([{ work: "" }]);
 const projects = ref([{ project: "" }]);
 const skills = ref([""]);
@@ -21,7 +26,7 @@ const interests = ref([""]);
 const awards = ref([{ award: "" }]);
 
 const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" });
-const addEducation = () => education.value.push({ school: "" });
+const addEducation = () => router.push({ name: "addEducation" });
 const addExperience = () => experience.value.push({ work: "" });
 const addProject = () => projects.value.push({ project: "" });
 const addSkill = () => skills.value.push("");
@@ -41,6 +46,35 @@ const saveData = () => {
     awards: awards.value
   });
 };
+
+
+
+const retrieveEducation = () => {
+  Education.getAllEducations(user.value.studentId)
+    .then((response) => {
+      education.value = response.data;
+    })
+    .catch((e) => {
+      console.log("retrieved education");
+    });
+};
+
+const deleteEducation = () => {
+  Education.deleteEducation(user.value.id, education.id)
+    .then(() => {
+      retrieveCourses();
+    })
+    .catch((e) => {
+      console.log("deleted education");
+    });
+};
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  console.log(user.value)
+  retrieveEducation();
+})
+
 </script>
 
 <template>
@@ -93,6 +127,46 @@ const saveData = () => {
       </v-card-actions>
     </v-card>
 
+    <table class="education-table">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr v-for="(item, index) in education" :key="item.id">
+                      <td>{{ item.name }}</td>
+                      <td>
+                          <div class="button-container">
+                              <button class="action-button" @click="addEducation">Edit</button>
+                              <button class="action-button" @click="addEducation">View</button>
+                              <button class="action-button" @click="addEducation">Delete</button>
+                          </div>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+          <v-card class="mb-6">
+            
+      <v-card-title>Education</v-card-title>
+      <v-card-text>
+        <v-row v-for="(item, index) in education" :key="item.id">
+          <v-col cols="5">
+            <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
+          </v-col>
+          <v-col cols="5">
+            <v-text-field v-model="link.link" label="Link" />
+          </v-col>
+          <v-col cols="2">
+            <v-btn icon @click="deleteEducation">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-btn color="primary" text @click="addPersonalLink">+ Add Link</v-btn>
+      </v-card-text>
+    </v-card>
+    
     <!-- Other Sections: Education, Experience, Projects, Skills, Interests, Awards -->
     <v-card v-for="(section, index) in [
       { title: 'Education', items: education, addFunc: addEducation, label: 'School' },
