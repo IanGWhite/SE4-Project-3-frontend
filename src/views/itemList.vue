@@ -1,9 +1,11 @@
 <script setup>
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
-import MenuBar from "../components/MenuBar.vue";
+import linkServices from "../services/linkServices";
+import Utils from "../config/utils.js";
 
 const router = useRouter();
+const user = ref({});
 const contactInfo = ref({
   firstName: "",
   lastName: "",
@@ -11,11 +13,14 @@ const contactInfo = ref({
   state: "",
   email: ""
 });
+
+
+
 const personalLinks = ref([{ type: "", link: "" }]);
 const skills = ref([{skill :""}]);
 const interests = ref([{interest: ""}]);
 
-const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); // this will be the code to add to the database
+const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
 const addEducation = () => router.push({ name: 'addEducation' });
 const editEducation = () => router.push({ name: 'EditEducation' });
 const addExperience = () => router.push({ name: 'AddExperience' });
@@ -26,9 +31,40 @@ const addSkill = () => skills.value.push({ skill: ""}); // this will be the code
 const addInterest = () => interests.value.push({ interest: ""}); // this will be the code to add to the database
 const addAward = () => router.push({ name: 'AddAward' });
 const editAward = () => router.push({ name: 'EditAward' });
-const saveData = () => {
-  //saves all data to database
+const savePersonalLink = (index) => {
+  const link = personalLinks.value[index];
+  linkServices.createLink(user.value.studentId, link) // Send only the specific link
+    .then((response) => {
+      personalLinks.value[index].id = response.data.id; // Update the ID if backend assigns it
+      console.log("Added:", personalLinks.value[index]);
+    })
+    .catch((e) => {
+      console.error("Error saving the link:", e.response?.data?.message || e.message);
+    });
 };
+
+// const savePersonalLink = (index) => {
+//   linkServices.createLink(user.value.studentId, personalLinks.value)
+//     .then(() => {
+//       //personalLinks.value[index].id = response.data.id;
+//       console.log("Added:", personalLinks.value);
+//       //router.push({ name: "tutorials" });
+//     })
+//     .catch((e) => {
+//       console.error(e.response.data.message);
+//     });
+// };
+
+const deleteLink = () => {
+  personalLinks.splice(index, 1);
+
+}
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  console.log(user.value)
+})
+
 </script>
 
 <template>
@@ -49,26 +85,55 @@ const saveData = () => {
       </v-card-actions>
     </v-card>
 
-    <!-- Personal Links Section -->
+    <!-- Personal Links Section
     <v-card class="mb-6">
       <v-card-title>Personal Links</v-card-title>
       <v-card-text>
         <v-row v-for="(link, index) in personalLinks" :key="index">
           <v-col cols="5">
-            <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
+            <v-text-field v-model="personalLinks.type" label="Type (GitHub, Social)" />
           </v-col>
           <v-col cols="5">
-            <v-text-field v-model="link.link" label="Link" />
+            <v-text-field v-model="personalLinks.link" label="Link" />
           </v-col>
           <v-col cols="2">
-            <v-btn icon @click="personalLinks.splice(index, 1)">
+            <v-btn icon @click="deleteLink(index)">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
+            <v-btn icon @click="savePersonalLink(index)">
+              Save </v-btn>
           </v-col>
         </v-row>
         <v-btn color="blue" text @click="addPersonalLink">+ Add Link</v-btn>
       </v-card-text>
-    </v-card>
+    </v-card> -->
+
+    <!-- Personal Links Section -->
+<v-card class="mb-6">
+  <v-card-title>Personal Links</v-card-title>
+  <v-card-text>
+    <v-row v-for="(link, index) in personalLinks" :key="index">
+      <v-col cols="5">
+        <!-- Bind directly to the 'type' property of the current 'link' object -->
+        <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
+      </v-col>
+      <v-col cols="5">
+        <!-- Bind directly to the 'link' property of the current 'link' object -->
+        <v-text-field v-model="link.link" label="Link" />
+      </v-col>
+      <v-col cols="2">
+        <v-btn icon @click="deleteLink(index)">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+        <v-btn icon @click="savePersonalLink(index)">
+          Save
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-btn color="blue" text @click="addPersonalLink">+ Add Link</v-btn>
+  </v-card-text>
+</v-card>
+
 
     <v-card class="mb-6">
       <v-card-title>Education</v-card-title>

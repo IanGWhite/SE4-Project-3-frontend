@@ -43,7 +43,7 @@ const handleCredentialResponse = async (response) => {
     
       fName.value = user.value.fName;
       lName.value = user.value.lName;
-      router.push({ name: "studentHome" });
+      router.push({ name: "StudentHome" });
       console.log(user.value)
     })
     .catch((error) => {
