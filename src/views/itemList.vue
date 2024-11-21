@@ -3,6 +3,7 @@ import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import linkServices from "../services/linkServices";
 import skillServices from "../services/skillServices.js";
+import contactServices from "../services/contactServices.js";
 import educationServices from "../services/educationServices";
 import experienceServices from "../services/experienceServices";
 import Utils from "../config/utils.js";
@@ -55,7 +56,7 @@ const savePersonalLink = (index) => {
         console.log("Added:", personalLinks.value[index]);
     })
       .catch((e) => {
-        console.error("Error saving the link:", e.response?.data?.message || e.message);
+        message.value =  "An error occurred";
     });
   }
 };
@@ -121,7 +122,26 @@ const deleteSkill = (index) => {
 
 
 const saveContactInfo = () => {
-
+ const contact = contactInfo.value;
+  if (contact.id) {
+    // Update an existing contact
+    contactServices.updateContact(user.value.studentId, contact.id, contact)
+      .then(() => {
+        console.log("contact updated successfully:", contact);
+      })
+      .catch((error) => {
+        console.error("Error updating contact:", error);
+      });
+  } else {
+    contactServices.createContact(user.value.studentId, contact)
+      .then((response) => {
+        contactInfo.value.id = response.data.id; // Update the ID if backend assigns it
+        console.log("Added:", contactInfo.value);
+    })
+      .catch((e) => {
+        message.value =  "An error occurred";
+    });
+  }
 };
 
 onMounted(() => {
@@ -129,6 +149,7 @@ onMounted(() => {
   console.log(user.value)
   fetchLinks();
   fetchSkills();
+  fetchContact();
   fetchEducation();
   fetchExperiences();
 })
@@ -145,6 +166,7 @@ const fetchLinks = () => {
     });
 };
 
+
 const fetchSkills = () => {
   skillServices.getAllSkills(user.value.studentId)
     .then((response) => {
@@ -153,6 +175,18 @@ const fetchSkills = () => {
     })
     .catch((error) => {
       console.error("Error fetching skills:", error);
+const fetchContact = () => {
+  contactServices.getAllContacts(user.value.studentId)
+    .then((response) => {
+      if (response.data && response.data.length > 0) {
+        contactInfo.value = response.data[0]; // Assuming only one contact entry per user
+      } else {
+        console.log("No contact info found.");
+      }
+      console.log("Fetched Contact Info:", contactInfo.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching contact info:", error);
     });
 };
 
