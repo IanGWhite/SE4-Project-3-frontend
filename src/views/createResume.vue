@@ -10,9 +10,22 @@ import Utils from "../config/utils.js";
 const user = ref({});
 const resumeName = ref("");
 const personalLinks = ref([{ type: "", link: "" }]);
+const contactInfo = ref({
+  firstName: "",
+  lastName: "",
+  city: "",
+  state: "",
+  email: ""
+});
 const professionalSummary = ref("");
+
+
+
+
+
+
 const sections = ref({
-  personalLink: [{ name: "link 1", checked: true }],
+  personalLink: [],
   education: [{ name: "School 1", checked: true }, { name: "School 2", checked: true }],
   experience: [{ name: "Company 1", checked: true }, { name: "Company 2", checked: true }],
   projects: [{ name: "Project 1", checked: true }],
@@ -39,7 +52,8 @@ const fetchLinks = () => {
       sections.value.personalLink = response.data.map((link) => ({
         name: link.link,
       })); // Assuming the backend returns an array of links
-      console.log("Fetched links:", sections.value.personalLink);
+      personalLinks.value = response.data;
+      console.log("Fetched links:", personalLinks.value[0].link);
     })
     .catch((error) => {
       console.error("Error fetching links:", error);
@@ -68,6 +82,8 @@ const generateResume1 = () => {
 
   doc.setFontSize(20);
   doc.setFont(font, "bold");
+  var tempString = "";
+  tempString += "first name";
   doc.text('First last', pageCenter, currentY, {align: "center"}); currentY += 6;
   doc.setFont(font, "normal");
   AddContactInfo(doc, currentY, pageCenter);
@@ -103,7 +119,8 @@ const AddContactInfo = (doc, currentY, pageCenter) => {
     if(link.checked)
     {
       contactString += " | ";
-      contactString += link.value;
+      contactString += personalLinks.value[0].link;
+      //contactString += link.name;
     }
   }
   doc.text(contactString, pageCenter, currentY, {align: "center"});
