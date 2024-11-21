@@ -38,7 +38,7 @@ const editEducation = (myEducation) => router.push({ name: 'EditEducation', para
 const addExperience = () => router.push({ name: 'AddExperience' });
 const editExperience = (myExperience) => router.push({ name: 'EditExperience', params: {id: myExperience.id} });
 const addProject = () => router.push({ name: 'AddProject' });
-const editProject = () => router.push({ name: 'EditProject' });
+const editProject = (myProject) => router.push({ name: 'EditProject', params: { id: myProject.id } });
 const addSkill = () => skills.value.push({ description: ""}); 
 const addInterest = () => interests.value.push({ description: ""});
 const addAward = () => router.push({ name: 'AddAward' });
@@ -98,6 +98,18 @@ const deleteEducation = (myEducation) => {
   }
 };
 
+
+const deleteProject = (myProject) => {
+  if (myProject.id) {
+    projectServices.deleteProject(user.value.studentId, myProject.id) // Delete link from backend
+      .then(() => {
+        console.log("Project deleted successfully");
+        fetchProject();
+        projects.value.splice(myProject.id, 1);
+      })
+      .catch((error) => {
+        console.error("Error deleting Project:", error);
+
 const deleteExperience = (myExperience) => {
   if (myExperience.id) {
     experienceServices.deleteExperience(user.value.studentId, myExperience.id) // Delete link from backend
@@ -108,6 +120,7 @@ const deleteExperience = (myExperience) => {
       })
       .catch((error) => {
         console.error("Error deleting Education:", error);
+
       });
   }
 };
@@ -423,10 +436,10 @@ const fetchAward= () => {
           <v-card-text> {{ project.name }}</v-card-text>
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="section.items.splice(i, 1)">
+          <v-btn icon @click="deleteProject(project)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="editProject">
+          <v-btn icon @click="editProject(project)">
             <v-icon>mdi-edit</v-icon>
           </v-btn>
         </v-col>

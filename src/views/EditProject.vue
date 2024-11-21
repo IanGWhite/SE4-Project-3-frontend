@@ -1,10 +1,14 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import ProjectServices from "../services/projectServices"; // hypothetical service for managing project data
-import MenuBar from "../components/MenuBar.vue";
+import Utils from "../config/utils.js";
 
 const router = useRouter();
+
+const route = useRoute();
+const user = ref({});
+
 const project = ref({
   name: "",
   city: "",
@@ -16,20 +20,41 @@ const project = ref({
 });
 const message = ref("");
 
-const saveProject = () => {
-  ProjectServices.create(project.value)
+const saveProject = (id) => {
+  ProjectServices.updateProject(user.value.studentId, id ,project.value)
     .then(() => {
       message.value = "Project saved successfully";
-      router.push({ name: "projectList" }); // hypothetical route name for project list
+      router.push({ name: "StudentInfo" }); // hypothetical route name for project list
     })
     .catch((e) => {
-      message.value = e.response.data.message || "An error occurred";
+      message.value =  "An error occurred";
     });
 };
 
 const cancel = () => {
-  router.push({ name: "projectList" }); // hypothetical route for cancel action
+  router.push({ name: "StudentInfo" }); // hypothetical route for cancel action
 };
+
+const getProject = async (id) => {
+  try {
+    const response = await ProjectServices.getProjects(user.value.studentId, id);
+    project.value = response.data;
+  } catch (error) {
+    console.error('Failed to retrieve project data:');
+  }
+};
+
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  console.log(user.value)
+  const projectId = route.params.id;
+    if (projectId) {
+      getProject(projectId);
+    } else {
+      console.error('No course ID provided in route');
+    }
+})
 </script>
 
 <template>
@@ -89,8 +114,8 @@ const cancel = () => {
             ></v-textarea>
 
             <div class="buttons">
-              <v-btn color="primary" @click="saveProject">Save</v-btn>
-              <v-btn color="error" @click="cancel">Cancel</v-btn>
+              <v-btn color="blue" @click="saveProject(route.params.id)">Save</v-btn>
+              <v-btn color="brown" @click="cancel">Cancel</v-btn>
             </div>
           </v-form>
         </v-card-text>
