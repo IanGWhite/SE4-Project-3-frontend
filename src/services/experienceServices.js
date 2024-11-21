@@ -1,19 +1,19 @@
 import apiClient from "./services.js";
 
 export default {
-  getAllExperiences(tutorialId) {
-    return apiClient.get(`/tutorials/${tutorialId}/experiences`);
+  getAllExperiences(studentId) {
+    return apiClient.get(`/students/${studentId}/experiences`);
   },
-  getExperiences(tutorialId, id) {
-    return apiClient.get(`/tutorials/${tutorialId}/experiences/${id}`);
+  getExperiences(studentId, id) {
+    return apiClient.get(`/students/${studentId}/experiences/${id}`);
   },
-  createExperience(tutorialId, data) {
-    return apiClient.post(`/tutorials/${tutorialId}/experiences`, data);
+  createExperience(studentId, data) {
+    return apiClient.post(`/students/${studentId}/experiences`, data);
   },
-  updateExperience(tutorialId, id, data) {
-    return apiClient.put(`/tutorials/${tutorialId}/experiences/${id}`, data);
+  updateExperience(studentId, id, data) {
+    return apiClient.put(`/students/${studentId}/experiences/${id}`, data);
   },
-  deleteExperience(tutorialId, id) {
-    return apiClient.delete(`/tutorials/${tutorialId}/experiences/${id}`);
+  deleteExperience(studentId, id) {
+    return apiClient.delete(`/students/${studentId}/experiences/${id}`);
   },
 };

@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import MenuBar from "../components/MenuBar.vue";
-
+import StudentServices from "../services/studentServices.js";
 import Utils from "../config/utils.js";
 import AuthServices from "../services/authServices";
 
@@ -36,14 +36,15 @@ const handleCredentialResponse = async (response) => {
     credential: response.credential,
   };
   await AuthServices.loginUser(token)
-    .then((response) => {
+    .then(async(response) => {
       user.value = response.data;
-      console.log("hiya")
+      console.log(user.value)
       Utils.setStore("user", user.value);
-      console.log("Hello")
+    
       fName.value = user.value.fName;
       lName.value = user.value.lName;
-      router.push({ name: "tutorials" });
+      router.push({ name: "StudentHome" });
+      console.log(user.value)
     })
     .catch((error) => {
       console.log("error", error);

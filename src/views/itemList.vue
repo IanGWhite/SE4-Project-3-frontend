@@ -1,9 +1,13 @@
 <script setup>
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
-import MenuBar from "../components/MenuBar.vue";
+import linkServices from "../services/linkServices";
+import educationServices from "../services/educationServices";
+import experienceServices from "../services/experienceServices";
+import Utils from "../config/utils.js";
 
 const router = useRouter();
+const user = ref({});
 const contactInfo = ref({
   firstName: "",
   lastName: "",
@@ -11,11 +15,16 @@ const contactInfo = ref({
   state: "",
   email: ""
 });
+
+
+
 const personalLinks = ref([{ type: "", link: "" }]);
+const experiences = ref([{ name: ""}]);
+const educations = ref([{name: ""}]);
 const skills = ref([{skill :""}]);
 const interests = ref([{interest: ""}]);
 
-const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); // this will be the code to add to the database
+const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
 const addEducation = () => router.push({ name: 'addEducation' });
 const editEducation = () => router.push({ name: 'EditEducation' });
 const addExperience = () => router.push({ name: 'AddExperience' });
@@ -26,9 +35,92 @@ const addSkill = () => skills.value.push({ skill: ""}); // this will be the code
 const addInterest = () => interests.value.push({ interest: ""}); // this will be the code to add to the database
 const addAward = () => router.push({ name: 'AddAward' });
 const editAward = () => router.push({ name: 'EditAward' });
-const saveData = () => {
-  //saves all data to database
+
+const savePersonalLink = (index) => {
+  const link = personalLinks.value[index];
+  if (link.id) {
+    // Update an existing link
+    linkServices.updateLink(user.value.studentId, link.id, link)
+      .then(() => {
+        console.log("Link updated successfully:", link);
+      })
+      .catch((error) => {
+        console.error("Error updating link:", error);
+      });
+  } else {
+    linkServices.createLink(user.value.studentId, link) // Send only the specific link
+      .then((response) => {
+        personalLinks.value[index].id = response.data.id; // Update the ID if backend assigns it
+        console.log("Added:", personalLinks.value[index]);
+    })
+      .catch((e) => {
+        console.error("Error saving the link:", e.response?.data?.message || e.message);
+    });
+  }
 };
+
+const deleteLink = (index) => {
+  const linkToDelete = personalLinks.value[index];
+  if (linkToDelete.id) {
+    linkServices.deleteLink(user.value.studentId, linkToDelete.id) // Delete link from backend
+      .then(() => {
+        personalLinks.value.splice(index, 1);
+        console.log("Link deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Error deleting link:", error);
+      });
+  } else {
+    personalLinks.value.splice(index, 1); // Remove locally if not saved to backend
+  }
+};
+
+const saveContactInfo = () => {
+
+};
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  console.log(user.value)
+  fetchLinks();
+  fetchEducation();
+  fetchExperiences();
+})
+
+// Fetch links from the database
+const fetchLinks = () => {
+  linkServices.getAllLinks(user.value.studentId)
+    .then((response) => {
+      personalLinks.value = response.data; // Assuming the backend returns an array of links
+      console.log("Fetched links:", personalLinks.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching links:", error);
+    });
+};
+
+const fetchExperiences = () => {
+  experienceServices.getAllExperiences(user.value.studentId)
+    .then((response) => {
+      experiences.value = response.data; // Assuming the backend returns an array of links
+      console.log("Fetched Experiences:", experiences.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Experiences:", error);
+    });
+};
+
+const fetchEducation = () => {
+  educationServices.getAllEducations(user.value.studentId)
+    .then((response) => {
+      educations.value = response.data; // Assuming the backend returns an array of links
+      console.log("Fetched Educations:", educations.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Educations:", error);
+    });
+};
+
 </script>
 
 <template>
@@ -45,70 +137,75 @@ const saveData = () => {
         <v-text-field v-model="contactInfo.email" label="E-mail" />
       </v-card-text>
       <v-card-actions>
-        <v-btn color="blue" @click="saveData">Save</v-btn>
+        <v-btn color="blue" text @click="saveContactInfo">Save</v-btn>
       </v-card-actions>
     </v-card>
 
     <!-- Personal Links Section -->
-    <v-card class="mb-6">
-      <v-card-title>Personal Links</v-card-title>
-      <v-card-text>
-        <v-row v-for="(link, index) in personalLinks" :key="index">
-          <v-col cols="5">
-            <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
-          </v-col>
-          <v-col cols="5">
-            <v-text-field v-model="link.link" label="Link" />
-          </v-col>
-          <v-col cols="2">
-            <v-btn icon @click="personalLinks.splice(index, 1)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-btn color="blue" text @click="addPersonalLink">+ Add Link</v-btn>
-      </v-card-text>
-    </v-card>
+<v-card class="mb-6">
+  <v-card-title>Personal Links</v-card-title>
+  <v-card-text>
+    <v-row v-for="(link, index) in personalLinks" :key="index">
+      <v-col cols="5">
+        <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
+      </v-col>
+      <v-col cols="5">
+        <v-text-field v-model="link.link" label="Link" />
+      </v-col>
+      <v-col cols="2">
+        <v-btn icon @click="deleteLink(index)">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+        <v-btn icon @click="savePersonalLink(index)">
+          Save
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-btn color="blue" text @click="addPersonalLink">+ Add Link</v-btn>
+  </v-card-text>
+</v-card>
 
-    <v-card class="mb-6">
-      <v-card-title>Education</v-card-title>
-      <v-card-text>
-        <v-row >
-          <v-col cols="10">
-            <v-card-text> Education</v-card-text>
-          </v-col>
-          <v-col cols="2">
-            <v-btn icon @click="section.items.splice(i, 1)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-            <v-btn icon @click="editEducation">
-              <v-icon>mdi-edit</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-        <v-btn color="blue" text @click="addEducation">+ Add</v-btn>
-      </v-card-text>
-    </v-card>
 
-    <v-card class="mb-6">
-    <v-card-title>Experience</v-card-title>
-    <v-card-text>
-      <v-row >
-        <v-col cols="10">
-          <v-card-text> Experience</v-card-text>
-        </v-col>
-        <v-col cols="2">
-          <v-btn icon @click="section.items.splice(i, 1)">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-          <v-btn icon @click="editExperience">
-            <v-icon>mdi-edit</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-btn color="blue" text @click="addExperience">+ Add</v-btn>
-    </v-card-text>
-  </v-card>
+<v-card class="mb-6">
+  <v-card-title>Education</v-card-title>
+  <v-card-text>
+    <v-row v-for="(education, index) in educations" :key="index">
+      <v-col cols="5">
+        <v-card-text> {{ education.name }}</v-card-text>
+      </v-col>
+      <v-col cols="2">
+        <v-btn icon @click="deleteEducation(index)">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+        <v-btn icon @click="editEducation(index)">
+          Edit
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-btn color="blue" text @click="addEducation">+ Add Education</v-btn>
+  </v-card-text>
+</v-card>
+
+<v-card class="mb-6">
+  <v-card-title>Experience</v-card-title>
+  <v-card-text>
+    <v-row v-for="(experience, index) in experiences" :key="index">
+      <v-col cols="5">
+        <v-card-text> {{ experience.name }}</v-card-text>
+      </v-col>
+      <v-col cols="2">
+        <v-btn icon @click="deleteExperience(index)">
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+        <v-btn icon @click="editExperience(index)">
+          Edit
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-btn color="blue" text @click="addExperience">+ Add Experience</v-btn>
+  </v-card-text>
+</v-card>
+    
 
   <v-card class="mb-6">
     <v-card-title>Project</v-card-title>
