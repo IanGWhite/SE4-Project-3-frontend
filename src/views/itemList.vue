@@ -31,7 +31,7 @@ const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" });
 const addEducation = () => router.push({ name: 'addEducation' });
 const editEducation = (myEducation) => router.push({ name: 'EditEducation', params: { id: myEducation.id } });
 const addExperience = () => router.push({ name: 'AddExperience' });
-const editExperience = () => router.push({ name: 'EditExperience' });
+const editExperience = (myExperience) => router.push({ name: 'EditExperience', params: {id: myExperience.id} });
 const addProject = () => router.push({ name: 'AddProject' });
 const editProject = () => router.push({ name: 'EditProject' });
 const addSkill = () => skills.value.push({ description: ""}); 
@@ -86,6 +86,20 @@ const deleteEducation = (myEducation) => {
         console.log("Education deleted successfully");
         fetchEducation();
         educations.value.splice(myEducation.id, 1);
+      })
+      .catch((error) => {
+        console.error("Error deleting Education:", error);
+      });
+  }
+};
+
+const deleteExperience = (myExperience) => {
+  if (myExperience.id) {
+    experienceServices.deleteExperience(user.value.studentId, myExperience.id) // Delete link from backend
+      .then(() => {
+        console.log("Education deleted successfully");
+        fetchExperiences();
+        experiences.value.splice(myExperience.id, 1);
       })
       .catch((error) => {
         console.error("Error deleting Education:", error);
@@ -360,10 +374,10 @@ const fetchEducation = () => {
         <v-card-text> {{ experience.name }}</v-card-text>
       </v-col>
       <v-col cols="2">
-        <v-btn icon @click="deleteExperience(index)">
+        <v-btn icon @click="deleteExperience(experience)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
-        <v-btn icon @click="editExperience(index)">
+        <v-btn icon @click="editExperience(experience)">
           Edit
         </v-btn>
       </v-col>
