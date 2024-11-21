@@ -1,33 +1,41 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import AwardServices from "../services/awardServices"; // hypothetical service for managing award data
 import MenuBar from "../components/MenuBar.vue";
+import Utils from "../config/utils.js";
+import StudentServices from "../services/studentServices.js";
 
 const router = useRouter();
+const user = ref({});
 const award = ref({
   organization: "",
   title: "",
-  monthStart: "",
-  monthEnd: "",
+  startDate: "",
+  endDate: "",
   description: ""
 });
 const message = ref("");
 
 const saveAward = () => {
-  AwardServices.create(award.value)
+  AwardServices.createAward(user.value.studentId, award.value)
     .then(() => {
       message.value = "Award saved successfully";
-      router.push({ name: "awardList" }); // hypothetical route name for award list
+      router.push({ name: "StudentInfo" }); // hypothetical route name for award list
     })
     .catch((e) => {
-      message.value = e.response.data.message || "An error occurred";
+      message.value ="An error occurred";
     });
 };
 
 const cancel = () => {
-  router.push({ name: "awardList" }); // hypothetical route for cancel action
+  router.push({ name: "StudentInfo" }); // hypothetical route for cancel action
 };
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  console.log(user.value)
+})
 </script>
 
 <template>
@@ -39,7 +47,7 @@ const cancel = () => {
         </v-card-title>
         <v-card-text>
           <p>{{ message }}</p>
-          <v-form @submit.prevent="saveAward">
+          <v-form>
             <v-text-field
               v-model="award.organization"
               label="Organization Name"
@@ -54,13 +62,13 @@ const cancel = () => {
 
             <div class="row">
               <v-text-field
-                v-model="award.monthStart"
+                v-model="award.startDate"
                 label="Start Month"
                 class="mr-2"
                 required
               ></v-text-field>
               <v-text-field
-                v-model="award.monthEnd"
+                v-model="award.endDate"
                 label="End Month"
                 required
               ></v-text-field>

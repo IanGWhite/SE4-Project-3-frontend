@@ -1,19 +1,19 @@
 import apiClient from "./services.js";
 
 export default {
-  getAllAwards(tutorialId) {
-    return apiClient.get(`/tutorials/${tutorialId}/awards`);
+  getAllAwards(studentId) {
+    return apiClient.get(`/students/${studentId}/awards`);
   },
-  getAwards(tutorialId, id) {
-    return apiClient.get(`/tutorials/${tutorialId}/awards/${id}`);
+  getAwards(studentId, id) {
+    return apiClient.get(`/students/${studentId}/awards/${id}`);
   },
-  createAward(tutorialId, data) {
-    return apiClient.post(`/tutorials/${tutorialId}/awards`, data);
+  createAward(studentId, data) {
+    return apiClient.post(`/students/${studentId}/awards`, data);
   },
-  updateAward(tutorialId, id, data) {
-    return apiClient.put(`/tutorials/${tutorialId}/awards/${id}`, data);
+  updateAward(studentId, id, data) {
+    return apiClient.put(`/students/${studentId}/awards/${id}`, data);
   },
-  deleteAward(tutorialId, id) {
-    return apiClient.delete(`/tutorials/${tutorialId}/awards/${id}`);
+  deleteAward(studentId, id) {
+    return apiClient.delete(`/students/${studentId}/awards/${id}`);
   },
 };
