@@ -1,33 +1,42 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ExperienceServices from "../services/experienceServices"; // hypothetical service for managing experience data
 import MenuBar from "../components/MenuBar.vue";
+import Utils from "../config/utils.js";
+import StudentServices from "../services/studentServices.js";
 
 const router = useRouter();
+const user = ref({});
 const experience = ref({
-  organization: "",
+  name: "",
   position: "",
-  monthStart: "",
-  monthEnd: "",
+  state: "",
+  startDate: "",
+  endDate: "",
   description: ""
 });
 const message = ref("");
 
 const saveExperience = () => {
-  ExperienceServices.create(experience.value)
+  ExperienceServices.createExperience(user.value.studentId,experience.value)
     .then(() => {
       message.value = "Experience saved successfully";
-      router.push({ name: "experienceList" }); // hypothetical route name for experience list
+      router.push({ name: "StudentInfo" }); // hypothetical route name for experience list
     })
     .catch((e) => {
-      message.value = e.response.data.message || "An error occurred";
+      message.value = "An error occurred";
     });
 };
 
 const cancel = () => {
-  router.push({ name: "experienceList" }); // hypothetical route for cancel action
+  router.push({ name: "StudentInfo" }); // hypothetical route for cancel action
 };
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  console.log(user.value)
+})
 </script>
 
 <template>
@@ -39,9 +48,9 @@ const cancel = () => {
         </v-card-title>
         <v-card-text>
           <p>{{ message }}</p>
-          <v-form @submit.prevent="saveExperience">
+          <v-form>
             <v-text-field
-              v-model="experience.organization"
+              v-model="experience.name"
               label="Organization Name"
               required
             ></v-text-field>
@@ -52,15 +61,21 @@ const cancel = () => {
               required
             ></v-text-field>
 
+            <v-text-field
+              v-model="experience.state"
+              label="State"
+              required
+            ></v-text-field>
+
             <div class="row">
               <v-text-field
-                v-model="experience.monthStart"
+                v-model="experience.startDate"
                 label="Start Month"
                 class="mr-2"
                 required
               ></v-text-field>
               <v-text-field
-                v-model="experience.monthEnd"
+                v-model="experience.endDate"
                 label="End Month"
                 required
               ></v-text-field>
