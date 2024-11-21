@@ -29,43 +29,42 @@ const saveResume = () => {
     professionalSummary,
     sections
   });
+  
   generateResume1();
 };
 
+const font = "times";
 const generateResume1 = () => {
   var doc = new jsPDF();
+  //console.log(doc.getFontList());
   var pageWidth = doc.internal.pageSize.getWidth(); 
   var pageHeight = doc.internal.pageSize.getHeight();
   var pageCenter = pageWidth/2
   var currentY = 15;
 
   doc.setFontSize(20);
+  doc.setFont(font, "bold");
   doc.text('First last', pageCenter, currentY, {align: "center"}); currentY += 5;
+  doc.setFont(font, "normal");
   AddContactInfo(doc, currentY, pageCenter);
   currentY += 15;
 
   //summary header
-  doc.setFontSize(15);
-  doc.text("Professional Summary", 10, currentY, {});
-  currentY += 5;
-  doc.line(9, currentY, 200, currentY); currentY += 5;
+  currentY = AddHeader(doc, currentY, "SUMMARY");
   //summary paragraph
-  doc.setFontSize(12);
-  var splitSummary = doc.splitTextToSize(professionalSummary.value, pageWidth-10);
+  doc.setFontSize(11);
+  doc.setFont(font, "normal");
+  var splitSummary = doc.splitTextToSize(professionalSummary.value, pageWidth-20);
   doc.text(splitSummary, pageCenter, currentY, {align: "center"});
   currentY += doc.getTextDimensions(splitSummary).h;
   currentY += 10;
   
   //education header
-  doc.setFontSize(15);
-  doc.text("EDUCATION", 10, currentY, {});
-  currentY += 5;
-  doc.line(9, currentY, 200, currentY);
-  currentY += 5;
-  AddEducationInfo(doc, currentY);
-
+  currentY = AddHeader(doc, currentY, "EDUCATION");
+  currentY = AddEducationInfo(doc, currentY);
+  currentY =  AddAwardInfo(doc, currentY);
   
-  //doc.text("big ol test hahahahahaha", 10, currentY);
+  currentY = AddExperienceInfo(doc, currentY);
   
   //doc.text(professionalSummary.value, pageWidth/2, 40, {align: "center"});
   doc.output('dataurlnewwindow');
@@ -91,23 +90,75 @@ const AddEducationInfo = (doc, currentY) => {
   var pageWidth = doc.internal.pageSize.getWidth(); 
   var pageHeight = doc.internal.pageSize.getHeight();
   var pageCenter = pageWidth/2
-  doc.setFontSize(10);
+  var lineHeight = 5;
+  doc.setFontSize(11);
   
   for(let i=0; i<sections.value.education.length; i++)
   {
-    
     var edu = sections.value.education[i];
     if(edu.checked)
-  {
-    // get school name and city and state
-    var tempConcat = "Oklahoma Christian University, Oklahoma City, OK"
-    doc.text(tempConcat, 10, currentY);
-    doc.text("Aug, 2021 - July 2025", pageWidth-10, currentY, {align:"right"});
-    currentY += 5;
+    {
+      // get school name and city and state
+      var tempConcat = "Oklahoma Christian University, Oklahoma City, OK"
+      doc.text(tempConcat, 10, currentY);
+      doc.text("Aug, 2021 - July 2025", pageWidth-10, currentY, {align:"right"});
+      currentY += lineHeight;
+      doc.setFont(font, "italic");
+      doc.text("Bachelor of Arts /Bachelor of Science in XX /B.B.A in XX", 10, currentY); currentY += lineHeight;
+      doc.text("GPA: ", 10, currentY); 
+      doc.text("3.4", 20, currentY); currentY += lineHeight;
+      doc.setFont(font, "normal");
+      doc.text("Coursework: Here is a project I did bla bla bla.", 10, currentY); currentY+=lineHeight;
+    }
   }
-    
+  return currentY;
+}
 
+const AddAwardInfo = (doc, currentY) => {
+  var pageWidth = doc.internal.pageSize.getWidth(); 
+  for(let i=0; i<sections.value.awards.length; i++)
+  {
+    var award = sections.value.awards[i];
+    if(award.checked)
+    {
+      doc.setFont(font, "italic");
+      doc.text("Awards: ", 10, currentY);
+      doc.setFont(font, "normal");
+      doc.text("award title", 24, currentY);
+      doc.text("Feb, 2023 - July 2023", pageWidth-10, currentY, {align:"right"});
+      currentY += 5;
+      doc.text("this is where the award description goes", 10, currentY); currentY += 5;
+      
+
+    }
   }
+  return currentY;
+}
+
+const AddExperienceInfo = (doc, currentY) => {
+  currentY = AddHeader(doc, currentY, "PROFESSIONAL EXPERIENCE");
+  doc.setFontSize(11);
+  doc.setFont(font, "bold");
+  var workName = "Oklahoma Christian University";
+  workName += ",";
+  var temp = doc.text(workName, 10, currentY);
+  console.clear();
+  
+  doc.setFont(font, "normal");
+  doc.text("Oklahoma City, OK", 10+(doc.getTextDimensions(workName).w * 1.1), currentY);
+  //console.log(doc.getTextDimensions(temp.text));
+
+}
+
+const AddHeader = (doc, currentY, title) => {
+  doc.setFontSize(15);
+  doc.setFont(font, "bold");
+  doc.text(title, 10, currentY, {});
+  currentY += 5;
+  doc.line(9, currentY, 200, currentY);
+  currentY += 5;
+  doc.setFont(font, "normal");
+  return currentY;
 }
 </script>
 
