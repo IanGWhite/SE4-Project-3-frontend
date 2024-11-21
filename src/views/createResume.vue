@@ -8,13 +8,13 @@ const resumeName = ref("");
 const personalLinks = ref([{ type: "", link: "" }]);
 const professionalSummary = ref("");
 const sections = ref({
-  personalLink: [{ name: "link 1", checked: false }],
-  education: [{ name: "School 1", checked: false }, { name: "School 2", checked: false }],
-  experience: [{ name: "Company 1", checked: false }, { name: "Company 2", checked: false }],
-  projects: [{ name: "Project 1", checked: false }],
-  skills: [{ name: "Skill 1", checked: false }],
-  interests: [{ name: "Interest 1", checked: false }],
-  awards: [{ name: "Award 1", checked: false }],
+  personalLink: [{ name: "link 1", checked: true }],
+  education: [{ name: "School 1", checked: true }, { name: "School 2", checked: true }],
+  experience: [{ name: "Company 1", checked: true }, { name: "Company 2", checked: true }],
+  projects: [{ name: "Project 1", checked: true }],
+  skills: [{ name: "Skill 1", checked: true }],
+  interests: [{ name: "Interest 1", checked: true }],
+  awards: [{ name: "Award 1", checked: true }, { name: "Award 2", checked: true }],
 });
 
 
@@ -40,11 +40,11 @@ const generateResume1 = () => {
   var pageWidth = doc.internal.pageSize.getWidth(); 
   var pageHeight = doc.internal.pageSize.getHeight();
   var pageCenter = pageWidth/2
-  var currentY = 15;
+  var currentY = 25;
 
   doc.setFontSize(20);
   doc.setFont(font, "bold");
-  doc.text('First last', pageCenter, currentY, {align: "center"}); currentY += 5;
+  doc.text('First last', pageCenter, currentY, {align: "center"}); currentY += 6;
   doc.setFont(font, "normal");
   AddContactInfo(doc, currentY, pageCenter);
   currentY += 15;
@@ -62,8 +62,8 @@ const generateResume1 = () => {
   
   currentY = AddSkills(doc, currentY);
   
-  //doc.text(professionalSummary.value, pageWidth/2, 40, {align: "center"});
   doc.output('dataurlnewwindow');
+  //doc.save("Resume");
 };
 
 const AddContactInfo = (doc, currentY, pageCenter) => {
@@ -85,7 +85,7 @@ const AddContactInfo = (doc, currentY, pageCenter) => {
 const AddSummary = (doc, currentY) => {
   currentY = AddHeader(doc, currentY, "SUMMARY");
   var pageWidth = doc.internal.pageSize.getWidth(); 
-  doc.setFontSize(11);
+  doc.setFontSize(12);
   doc.setFont(font, "normal");
   var splitSummary = doc.splitTextToSize(professionalSummary.value, pageWidth-20);
   doc.text(splitSummary, 10, currentY, {align: "left"});
@@ -221,7 +221,7 @@ const AddSkills = (doc, currentY) => {
 }
 
 const AddHeader = (doc, currentY, title) => {
-  doc.setFontSize(14);
+  doc.setFontSize(13);
   doc.setFont(font, "bold");
   doc.text(title, 10, currentY, {});
   currentY += 5;
