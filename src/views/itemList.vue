@@ -33,37 +33,64 @@ const addAward = () => router.push({ name: 'AddAward' });
 const editAward = () => router.push({ name: 'EditAward' });
 const savePersonalLink = (index) => {
   const link = personalLinks.value[index];
-  linkServices.createLink(user.value.studentId, link) // Send only the specific link
-    .then((response) => {
-      personalLinks.value[index].id = response.data.id; // Update the ID if backend assigns it
-      console.log("Added:", personalLinks.value[index]);
+  if (link.id) {
+    // Update an existing link
+    linkServices.updateLink(user.value.studentId, link.id, link)
+      .then(() => {
+        console.log("Link updated successfully:", link);
+      })
+      .catch((error) => {
+        console.error("Error updating link:", error);
+      });
+  } else {
+    linkServices.createLink(user.value.studentId, link) // Send only the specific link
+      .then((response) => {
+        personalLinks.value[index].id = response.data.id; // Update the ID if backend assigns it
+        console.log("Added:", personalLinks.value[index]);
     })
-    .catch((e) => {
-      console.error("Error saving the link:", e.response?.data?.message || e.message);
+      .catch((e) => {
+        console.error("Error saving the link:", e.response?.data?.message || e.message);
     });
+  }
 };
 
-// const savePersonalLink = (index) => {
-//   linkServices.createLink(user.value.studentId, personalLinks.value)
-//     .then(() => {
-//       //personalLinks.value[index].id = response.data.id;
-//       console.log("Added:", personalLinks.value);
-//       //router.push({ name: "tutorials" });
-//     })
-//     .catch((e) => {
-//       console.error(e.response.data.message);
-//     });
-// };
+const deleteLink = (index) => {
+  const linkToDelete = personalLinks.value[index];
+  if (linkToDelete.id) {
+    linkServices.deleteLink(user.value.studentId, linkToDelete.id) // Delete link from backend
+      .then(() => {
+        personalLinks.value.splice(index, 1);
+        console.log("Link deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Error deleting link:", error);
+      });
+  } else {
+    personalLinks.value.splice(index, 1); // Remove locally if not saved to backend
+  }
+};
 
-const deleteLink = () => {
-  personalLinks.splice(index, 1);
+const saveContactInfo = () => {
 
-}
+};
 
 onMounted(() => {
   user.value = Utils.getStore('user')
   console.log(user.value)
+  fetchLinks();
 })
+
+// Fetch links from the database
+const fetchLinks = () => {
+  linkServices.getAllLinks(user.value.studentId)
+    .then((response) => {
+      personalLinks.value = response.data; // Assuming the backend returns an array of links
+      console.log("Fetched links:", personalLinks.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching links:", error);
+    });
+};
 
 </script>
 
@@ -81,32 +108,9 @@ onMounted(() => {
         <v-text-field v-model="contactInfo.email" label="E-mail" />
       </v-card-text>
       <v-card-actions>
-        <v-btn color="blue" @click="saveData">Save</v-btn>
+        <v-btn color="blue" text @click="saveContactInfo">Save</v-btn>
       </v-card-actions>
     </v-card>
-
-    <!-- Personal Links Section
-    <v-card class="mb-6">
-      <v-card-title>Personal Links</v-card-title>
-      <v-card-text>
-        <v-row v-for="(link, index) in personalLinks" :key="index">
-          <v-col cols="5">
-            <v-text-field v-model="personalLinks.type" label="Type (GitHub, Social)" />
-          </v-col>
-          <v-col cols="5">
-            <v-text-field v-model="personalLinks.link" label="Link" />
-          </v-col>
-          <v-col cols="2">
-            <v-btn icon @click="deleteLink(index)">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-            <v-btn icon @click="savePersonalLink(index)">
-              Save </v-btn>
-          </v-col>
-        </v-row>
-        <v-btn color="blue" text @click="addPersonalLink">+ Add Link</v-btn>
-      </v-card-text>
-    </v-card> -->
 
     <!-- Personal Links Section -->
 <v-card class="mb-6">
@@ -114,11 +118,9 @@ onMounted(() => {
   <v-card-text>
     <v-row v-for="(link, index) in personalLinks" :key="index">
       <v-col cols="5">
-        <!-- Bind directly to the 'type' property of the current 'link' object -->
         <v-text-field v-model="link.type" label="Type (GitHub, Social)" />
       </v-col>
       <v-col cols="5">
-        <!-- Bind directly to the 'link' property of the current 'link' object -->
         <v-text-field v-model="link.link" label="Link" />
       </v-col>
       <v-col cols="2">
