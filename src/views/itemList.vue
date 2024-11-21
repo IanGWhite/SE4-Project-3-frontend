@@ -6,6 +6,7 @@ import skillServices from "../services/skillServices.js";
 import contactServices from "../services/contactServices.js";
 import educationServices from "../services/educationServices";
 import experienceServices from "../services/experienceServices";
+import interestServices from "../services/interestServices.js";
 import Utils from "../config/utils.js";
 
 const router = useRouter();
@@ -24,7 +25,7 @@ const personalLinks = ref([{ type: "", link: "" }]);
 const experiences = ref([{ name: ""}]);
 const educations = ref([{name: ""}]);
 const skills = ref([{description :""}]);
-const interests = ref([{interest: ""}]);
+const interests = ref([{description: ""}]);
 
 const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
 const addEducation = () => router.push({ name: 'addEducation' });
@@ -34,7 +35,7 @@ const editExperience = () => router.push({ name: 'EditExperience' });
 const addProject = () => router.push({ name: 'AddProject' });
 const editProject = () => router.push({ name: 'EditProject' });
 const addSkill = () => skills.value.push({ description: ""}); 
-const addInterest = () => interests.value.push({ interest: ""}); // this will be the code to add to the database
+const addInterest = () => interests.value.push({ description: ""});
 const addAward = () => router.push({ name: 'AddAward' });
 const editAward = () => router.push({ name: 'EditAward' });
 
@@ -144,6 +145,49 @@ const saveContactInfo = () => {
   }
 };
 
+const saveInterest = (index) => {
+  const interest = interests.value[index];
+  if (interest.id) {
+    // Update an existing interest
+    interestServices.updateInterest(user.value.studentId, interest.id, interest)
+      .then(() => {
+        console.log("Interest updated successfully:", interest);
+      })
+      .catch((error) => {
+        console.error("Error updating interest:", error.response?.data?.message || error.message);
+      });
+  } else {
+    // Create a new interest
+    interestServices.createInterest(user.value.studentId, interest)
+      .then((response) => {
+        interests.value[index].id = response.data.id; // Update the ID assigned by the backend
+        console.log("Interest added successfully:", interests.value[index]);
+      })
+      .catch((error) => {
+        console.error("Error saving interest:", error.response?.data?.message || error.message);
+      });
+  }
+};
+
+const deleteInterest = (index) => {
+  const interestToDelete = interests.value[index];
+  
+  if (interestToDelete.id) {
+    // Delete from backend if it has an ID
+    interestServices.deleteInterest(user.value.studentId, interestToDelete.id)
+      .then(() => {
+        interests.value.splice(index, 1); // Remove from local array
+        console.log("Interest deleted successfully:", interestToDelete);
+      })
+      .catch((error) => {
+        console.error("Error deleting interest:", error.response?.data?.message || error.message);
+      });
+  } else {
+    // If no ID, just remove locally
+    interests.value.splice(index, 1);
+  }
+};
+
 onMounted(() => {
   user.value = Utils.getStore('user')
   console.log(user.value)
@@ -152,6 +196,7 @@ onMounted(() => {
   fetchContact();
   fetchEducation();
   fetchExperiences();
+  fetchInterests();
 })
 
 // Fetch links from the database
@@ -166,7 +211,6 @@ const fetchLinks = () => {
     });
 };
 
-
 const fetchSkills = () => {
   skillServices.getAllSkills(user.value.studentId)
     .then((response) => {
@@ -177,6 +221,18 @@ const fetchSkills = () => {
       console.error("Error fetching skills:", error);
     })
 };
+
+const fetchInterests = () => {
+  interestServices.getAllInterests(user.value.studentId)
+    .then((response) => {
+      interests.value = response.data; 
+      console.log("Fetched interests:", interests.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching interests:", error);
+    })
+};
+
 const fetchContact = () => {
   contactServices.getAllContacts(user.value.studentId)
     .then((response) => {
@@ -344,14 +400,17 @@ const fetchEducation = () => {
   <v-card class="mb-6">
     <v-card-title>Interests</v-card-title>
     <v-card-text>
-      <v-row v-for="(link, index) in interests" :key="index">
+      <v-row v-for="(interest, index) in interests" :key="index">
         <v-col cols="10">
-          <v-text-field v-model="link.type" label="Interests" />
+          <v-text-field v-model="interest.description" label="Interests" />
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="interests.splice(index, 1)">
+          <v-btn icon @click="deleteInterest(index)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
+          <v-btn icon @click="saveInterest(index)">
+            Save
+          </v-btn> 
         </v-col>
       </v-row>
       <v-btn color="blue" text @click="addInterest">+ Add Interest</v-btn>
