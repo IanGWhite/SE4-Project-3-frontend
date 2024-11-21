@@ -7,7 +7,9 @@ import contactServices from "../services/contactServices.js";
 import educationServices from "../services/educationServices";
 import experienceServices from "../services/experienceServices";
 import interestServices from "../services/interestServices.js";
+import projectServices from "../services/projectServices.js";
 import Utils from "../config/utils.js";
+import awardServices from "../services/awardServices.js";
 
 const router = useRouter();
 const user = ref({});
@@ -26,6 +28,9 @@ const experiences = ref([{ name: ""}]);
 const educations = ref([{name: ""}]);
 const skills = ref([{description :""}]);
 const interests = ref([{description: ""}]);
+const projects = ref([{name : ""}]);
+const awards =  ref([{title: ""}]);
+ 
 
 const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
 const addEducation = () => router.push({ name: 'addEducation' });
@@ -228,6 +233,8 @@ onMounted(() => {
   fetchEducation();
   fetchExperiences();
   fetchInterests();
+  fetchProject();
+  fetchAward();
 })
 
 // Fetch links from the database
@@ -293,11 +300,32 @@ const fetchExperiences = () => {
 const fetchEducation = () => {
   educationServices.getAllEducations(user.value.studentId)
     .then((response) => {
-      educations.value = response.data; // Assuming the backend returns an array of links
+      educations.value = response.data; 
       console.log("Fetched Educations:", educations.value);
     })
     .catch((error) => {
       console.error("Error fetching Educations:", error);
+    });
+};
+
+const fetchProject= () => {
+  projectServices.getAllProjects(user.value.studentId)
+    .then((response) => {
+      projects.value = response.data; 
+      console.log("Fetched Projects:", projects.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Projects:", error);
+    });
+};
+const fetchAward= () => {
+  awardServices.getAllAwards(user.value.studentId)
+    .then((response) => {
+      awards.value = response.data; 
+      console.log("Fetched Awards:", awards.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Awards:", error);
     });
 };
 
@@ -350,7 +378,7 @@ const fetchEducation = () => {
   <v-card-title>Education</v-card-title>
   <v-card-text>
     <v-row v-for="(education, index) in educations" :key="index">
-      <v-col cols="5">
+      <v-col cols="10">
         <v-card-text> {{ education.name }}</v-card-text>
       </v-col>
       <v-col cols="2">
@@ -370,7 +398,7 @@ const fetchEducation = () => {
   <v-card-title>Experience</v-card-title>
   <v-card-text>
     <v-row v-for="(experience, index) in experiences" :key="index">
-      <v-col cols="5">
+      <v-col cols="10">
         <v-card-text> {{ experience.name }}</v-card-text>
       </v-col>
       <v-col cols="2">
@@ -390,9 +418,9 @@ const fetchEducation = () => {
   <v-card class="mb-6">
     <v-card-title>Project</v-card-title>
     <v-card-text>
-      <v-row >
+      <v-row v-for="(project, index) in projects" :key="index">
         <v-col cols="10">
-          <v-card-text> Project</v-card-text>
+          <v-card-text> {{ project.name }}</v-card-text>
         </v-col>
         <v-col cols="2">
           <v-btn icon @click="section.items.splice(i, 1)">
@@ -436,10 +464,10 @@ const fetchEducation = () => {
           <v-text-field v-model="interest.description" label="Interests" />
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="deleteInterest(index)">
+          <v-btn icon @click="deleteInterest(interest)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="saveInterest(index)">
+          <v-btn icon @click="saveInterest(interest)">
             Save
           </v-btn> 
         </v-col>
@@ -450,22 +478,22 @@ const fetchEducation = () => {
 
 
   <v-card class="mb-6">
-    <v-card-title>Award</v-card-title>
+    <v-card-title>Awards</v-card-title>
     <v-card-text>
-      <v-row >
+      <v-row v-for="(award, index) in awards" :key="index">
         <v-col cols="10">
-          <v-card-text> Award</v-card-text>
+          <v-card-text> {{ award.title }}</v-card-text>
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="section.items.splice(i, 1)">
+          <v-btn icon @click="deleteAward(award)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="editAward">
-            <v-icon>mdi-edit</v-icon>
-          </v-btn>
+          <v-btn icon @click="editAward(award)">
+            Edit
+          </v-btn> 
         </v-col>
       </v-row>
-      <v-btn color="blue" text @click="addAward">+ Add</v-btn>
+      <v-btn color="blue" text @click="addAward">+ Add Award</v-btn>
     </v-card-text>
   </v-card>
   </v-container>

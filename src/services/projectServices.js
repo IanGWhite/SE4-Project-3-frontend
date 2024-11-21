@@ -1,19 +1,19 @@
 import apiClient from "./services.js";
 
 export default {
-  getAllProjects(tutorialId) {
-    return apiClient.get(`/tutorials/${tutorialId}/projects`);
+  getAllProjects(studentId) {
+    return apiClient.get(`/students/${studentId}/projects`);
   },
-  getProjects(tutorialId, id) {
-    return apiClient.get(`/tutorials/${tutorialId}/projects/${id}`);
+  getProjects(studentId, id) {
+    return apiClient.get(`/students/${studentId}/projects/${id}`);
   },
-  createProject(tutorialId, data) {
-    return apiClient.post(`/tutorials/${tutorialId}/projects`, data);
+  createProject(studentId, data) {
+    return apiClient.post(`/students/${studentId}/projects`, data);
   },
-  updateProject(tutorialId, id, data) {
-    return apiClient.put(`/tutorials/${tutorialId}/projects/${id}`, data);
+  updateProject(studentId, id, data) {
+    return apiClient.put(`/students/${studentId}/projects/${id}`, data);
   },
-  deleteProject(tutorialId, id) {
-    return apiClient.delete(`/tutorials/${tutorialId}/projects/${id}`);
+  deleteProject(studentId, id) {
+    return apiClient.delete(`/students/${studentId}/projects/${id}`);
   },
 };
