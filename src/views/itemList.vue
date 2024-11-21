@@ -175,6 +175,8 @@ const fetchSkills = () => {
     })
     .catch((error) => {
       console.error("Error fetching skills:", error);
+    })
+};
 const fetchContact = () => {
   contactServices.getAllContacts(user.value.studentId)
     .then((response) => {
