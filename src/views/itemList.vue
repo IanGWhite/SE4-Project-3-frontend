@@ -2,6 +2,8 @@
 import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import linkServices from "../services/linkServices";
+import skillServices from "../services/skillServices.js";
+import contactServices from "../services/contactServices.js";
 import educationServices from "../services/educationServices";
 import experienceServices from "../services/experienceServices";
 import Utils from "../config/utils.js";
@@ -21,7 +23,7 @@ const contactInfo = ref({
 const personalLinks = ref([{ type: "", link: "" }]);
 const experiences = ref([{ name: ""}]);
 const educations = ref([{name: ""}]);
-const skills = ref([{skill :""}]);
+const skills = ref([{description :""}]);
 const interests = ref([{interest: ""}]);
 
 const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
@@ -31,7 +33,7 @@ const addExperience = () => router.push({ name: 'AddExperience' });
 const editExperience = () => router.push({ name: 'EditExperience' });
 const addProject = () => router.push({ name: 'AddProject' });
 const editProject = () => router.push({ name: 'EditProject' });
-const addSkill = () => skills.value.push({ skill: ""}); // this will be the code to add to the database
+const addSkill = () => skills.value.push({ description: ""}); 
 const addInterest = () => interests.value.push({ interest: ""}); // this will be the code to add to the database
 const addAward = () => router.push({ name: 'AddAward' });
 const editAward = () => router.push({ name: 'EditAward' });
@@ -54,7 +56,7 @@ const savePersonalLink = (index) => {
         console.log("Added:", personalLinks.value[index]);
     })
       .catch((e) => {
-        console.error("Error saving the link:", e.response?.data?.message || e.message);
+        message.value =  "An error occurred";
     });
   }
 };
@@ -75,14 +77,79 @@ const deleteLink = (index) => {
   }
 };
 
-const saveContactInfo = () => {
+const saveSkill = (index) => {
+  const skill = skills.value[index];
+  if (skill.id) {
+    // Update an existing skill
+    skillServices.updateSkill(user.value.studentId, skill.id, skill)
+      .then(() => {
+        console.log("Skill updated successfully:", skill);
+      })
+      .catch((error) => {
+        console.error("Error updating skill:", error.response?.data?.message || error.message);
+      });
+  } else {
+    // Create a new skill
+    skillServices.createSkill(user.value.studentId, skill)
+      .then((response) => {
+        skills.value[index].id = response.data.id; // Update the ID assigned by the backend
+        console.log("Skill added successfully:", skills.value[index]);
+      })
+      .catch((error) => {
+        console.error("Error saving skill:", error.response?.data?.message || error.message);
+      });
+  }
+};
 
+const deleteSkill = (index) => {
+  const skillToDelete = skills.value[index];
+  
+  if (skillToDelete.id) {
+    // Delete from backend if it has an ID
+    skillServices.deleteSkill(user.value.studentId, skillToDelete.id)
+      .then(() => {
+        skills.value.splice(index, 1); // Remove from local array
+        console.log("Skill deleted successfully:", skillToDelete);
+      })
+      .catch((error) => {
+        console.error("Error deleting skill:", error.response?.data?.message || error.message);
+      });
+  } else {
+    // If no ID, just remove locally
+    skills.value.splice(index, 1);
+  }
+};
+
+
+const saveContactInfo = () => {
+ const contact = contactInfo.value;
+  if (contact.id) {
+    // Update an existing contact
+    contactServices.updateContact(user.value.studentId, contact.id, contact)
+      .then(() => {
+        console.log("contact updated successfully:", contact);
+      })
+      .catch((error) => {
+        console.error("Error updating contact:", error);
+      });
+  } else {
+    contactServices.createContact(user.value.studentId, contact)
+      .then((response) => {
+        contactInfo.value.id = response.data.id; // Update the ID if backend assigns it
+        console.log("Added:", contactInfo.value);
+    })
+      .catch((e) => {
+        message.value =  "An error occurred";
+    });
+  }
 };
 
 onMounted(() => {
   user.value = Utils.getStore('user')
   console.log(user.value)
   fetchLinks();
+  fetchSkills();
+  fetchContact();
   fetchEducation();
   fetchExperiences();
 })
@@ -96,6 +163,32 @@ const fetchLinks = () => {
     })
     .catch((error) => {
       console.error("Error fetching links:", error);
+    });
+};
+
+
+const fetchSkills = () => {
+  skillServices.getAllSkills(user.value.studentId)
+    .then((response) => {
+      skills.value = response.data; // Assuming the backend returns an array of skills
+      console.log("Fetched skills:", skills.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching skills:", error);
+    })
+};
+const fetchContact = () => {
+  contactServices.getAllContacts(user.value.studentId)
+    .then((response) => {
+      if (response.data && response.data.length > 0) {
+        contactInfo.value = response.data[0]; // Assuming only one contact entry per user
+      } else {
+        console.log("No contact info found.");
+      }
+      console.log("Fetched Contact Info:", contactInfo.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching contact info:", error);
     });
 };
 
@@ -227,22 +320,26 @@ const fetchEducation = () => {
     </v-card-text>
   </v-card>
 
-  <v-card class="mb-6">
-    <v-card-title>Skills</v-card-title>
-    <v-card-text>
-      <v-row v-for="(link, index) in skills" :key="index">
-        <v-col cols="10">
-          <v-text-field v-model="link.type" label="Skill" />
-        </v-col>
-        <v-col cols="2">
-          <v-btn icon @click="skills.splice(index, 1)">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-btn color="blue" text @click="addSkill">+ Add Skill</v-btn>
-    </v-card-text>
-  </v-card>
+  
+ <v-card class="mb-6">
+ <v-card-title>Skills</v-card-title>
+ <v-card-text>
+   <v-row v-for="(skill, index) in skills" :key="index">
+     <v-col cols="10">
+      <v-text-field v-model="skill.description" label="Skill" />
+     </v-col>
+     <v-col cols="2">
+       <v-btn icon @click="deleteSkill(index)">
+         <v-icon>mdi-delete</v-icon>
+       </v-btn>
+       <v-btn icon @click="saveSkill(index)">
+          Save
+       </v-btn> 
+     </v-col>
+   </v-row>
+   <v-btn color="blue" text @click="addSkill">+ Add Skill</v-btn>
+ </v-card-text>
+</v-card>
 
   <v-card class="mb-6">
     <v-card-title>Interests</v-card-title>
