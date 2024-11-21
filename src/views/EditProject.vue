@@ -9,8 +9,8 @@ const project = ref({
   name: "",
   city: "",
   state: "",
-  monthStart: "",
-  monthEnd: "",
+  startDate: "",
+  endDate: "",
   position: "",
   description: ""
 });
@@ -64,13 +64,13 @@ const cancel = () => {
 
             <div class="row">
               <v-text-field
-                v-model="project.monthStart"
+                v-model="project.startDate"
                 label="Start Month"
                 class="mr-2"
                 required
               ></v-text-field>
               <v-text-field
-                v-model="project.monthEnd"
+                v-model="project.endDate"
                 label="End Month"
                 required
               ></v-text-field>
