@@ -7,6 +7,7 @@ import contactServices from "../services/contactServices.js";
 import educationServices from "../services/educationServices";
 import experienceServices from "../services/experienceServices";
 import interestServices from "../services/interestServices.js";
+import projectServices from "../services/projectServices.js";
 import Utils from "../config/utils.js";
 
 const router = useRouter();
@@ -26,6 +27,8 @@ const experiences = ref([{ name: ""}]);
 const educations = ref([{name: ""}]);
 const skills = ref([{description :""}]);
 const interests = ref([{description: ""}]);
+const projects = ref([{name : ""}]);
+ 
 
 const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
 const addEducation = () => router.push({ name: 'addEducation' });
@@ -214,6 +217,7 @@ onMounted(() => {
   fetchEducation();
   fetchExperiences();
   fetchInterests();
+  fetchProject();
 })
 
 // Fetch links from the database
@@ -279,11 +283,22 @@ const fetchExperiences = () => {
 const fetchEducation = () => {
   educationServices.getAllEducations(user.value.studentId)
     .then((response) => {
-      educations.value = response.data; // Assuming the backend returns an array of links
+      educations.value = response.data; 
       console.log("Fetched Educations:", educations.value);
     })
     .catch((error) => {
       console.error("Error fetching Educations:", error);
+    });
+};
+
+const fetchProject= () => {
+  projectServices.getAllProjects(user.value.studentId)
+    .then((response) => {
+      projects.value = response.data; 
+      console.log("Fetched Projects:", projects.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Projects:", error);
     });
 };
 
@@ -336,7 +351,7 @@ const fetchEducation = () => {
   <v-card-title>Education</v-card-title>
   <v-card-text>
     <v-row v-for="(education, index) in educations" :key="index">
-      <v-col cols="5">
+      <v-col cols="10">
         <v-card-text> {{ education.name }}</v-card-text>
       </v-col>
       <v-col cols="2">
@@ -356,7 +371,7 @@ const fetchEducation = () => {
   <v-card-title>Experience</v-card-title>
   <v-card-text>
     <v-row v-for="(experience, index) in experiences" :key="index">
-      <v-col cols="5">
+      <v-col cols="10">
         <v-card-text> {{ experience.name }}</v-card-text>
       </v-col>
       <v-col cols="2">
@@ -376,9 +391,9 @@ const fetchEducation = () => {
   <v-card class="mb-6">
     <v-card-title>Project</v-card-title>
     <v-card-text>
-      <v-row >
+      <v-row v-for="(project, index) in projects" :key="index">
         <v-col cols="10">
-          <v-card-text> Project</v-card-text>
+          <v-card-text> {{ project.name }}</v-card-text>
         </v-col>
         <v-col cols="2">
           <v-btn icon @click="section.items.splice(i, 1)">
