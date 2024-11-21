@@ -9,6 +9,7 @@ import experienceServices from "../services/experienceServices";
 import interestServices from "../services/interestServices.js";
 import projectServices from "../services/projectServices.js";
 import Utils from "../config/utils.js";
+import awardServices from "../services/awardServices.js";
 
 const router = useRouter();
 const user = ref({});
@@ -28,6 +29,7 @@ const educations = ref([{name: ""}]);
 const skills = ref([{description :""}]);
 const interests = ref([{description: ""}]);
 const projects = ref([{name : ""}]);
+const awards =  ref([{title: ""}]);
  
 
 const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
@@ -218,6 +220,7 @@ onMounted(() => {
   fetchExperiences();
   fetchInterests();
   fetchProject();
+  fetchAward();
 })
 
 // Fetch links from the database
@@ -299,6 +302,16 @@ const fetchProject= () => {
     })
     .catch((error) => {
       console.error("Error fetching Projects:", error);
+    });
+};
+const fetchAward= () => {
+  awardServices.getAllAwards(user.value.studentId)
+    .then((response) => {
+      awards.value = response.data; 
+      console.log("Fetched Awards:", awards.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Awards:", error);
     });
 };
 
@@ -437,10 +450,10 @@ const fetchProject= () => {
           <v-text-field v-model="interest.description" label="Interests" />
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="deleteInterest(index)">
+          <v-btn icon @click="deleteInterest(interest)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="saveInterest(index)">
+          <v-btn icon @click="saveInterest(interest)">
             Save
           </v-btn> 
         </v-col>
@@ -451,22 +464,22 @@ const fetchProject= () => {
 
 
   <v-card class="mb-6">
-    <v-card-title>Award</v-card-title>
+    <v-card-title>Awards</v-card-title>
     <v-card-text>
-      <v-row >
+      <v-row v-for="(award, index) in awards" :key="index">
         <v-col cols="10">
-          <v-card-text> Award</v-card-text>
+          <v-card-text> {{ award.title }}</v-card-text>
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="section.items.splice(i, 1)">
+          <v-btn icon @click="deleteAward(award)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="editAward">
-            <v-icon>mdi-edit</v-icon>
-          </v-btn>
+          <v-btn icon @click="editAward(award)">
+            Edit
+          </v-btn> 
         </v-col>
       </v-row>
-      <v-btn color="blue" text @click="addAward">+ Add</v-btn>
+      <v-btn color="blue" text @click="addAward">+ Add Award</v-btn>
     </v-card-text>
   </v-card>
   </v-container>
