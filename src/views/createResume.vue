@@ -1,9 +1,13 @@
 <script setup>
-import { ref } from "vue";
+
+import { ref,onMounted } from "vue";
+import { useRouter } from "vue-router";
+import linkServices from "../services/linkServices";
 import MenuBar from "../components/MenuBar.vue";
 import jsPDF from 'jspdf';
 import Utils from "../config/utils.js";
 
+const user = ref({});
 const resumeName = ref("");
 const personalLinks = ref([{ type: "", link: "" }]);
 const professionalSummary = ref("");
@@ -20,6 +24,26 @@ const sections = ref({
 
 const addSectionItem = (sectionKey) => {
   sections.value[sectionKey].push({ name: "", checked: false });
+};
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  //console.log(user.value)
+  fetchLinks();
+})
+
+// Fetch links from the database
+const fetchLinks = () => {
+  linkServices.getAllLinks(user.value.studentId)
+    .then((response) => {
+      sections.value.personalLink = response.data.map((link) => ({
+        name: link.link,
+      })); // Assuming the backend returns an array of links
+      console.log("Fetched links:", sections.value.personalLink);
+    })
+    .catch((error) => {
+      console.error("Error fetching links:", error);
+    });
 };
 
 const saveResume = () => {
@@ -73,12 +97,15 @@ const AddContactInfo = (doc, currentY, pageCenter) => {
   contactString += "(555) 555-5555 | ";
   contactString += "ike.theagle@oc.edu";
   //if(sections.personalLink.checked.value)
-  if(sections.value.personalLink[0].checked)
-{
-  //contactString += personalLinks.type;
-  contactString += " | ";
-  contactString += personalLinks.link;
-}
+  for(let i=0; i<sections.value.personalLink.length; i++)
+  {
+    var link = sections.value.personalLink[i];
+    if(link.checked)
+    {
+      contactString += " | ";
+      contactString += link.value;
+    }
+  }
   doc.text(contactString, pageCenter, currentY, {align: "center"});
 }
 
