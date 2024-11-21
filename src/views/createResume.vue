@@ -3,6 +3,10 @@
 import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import linkServices from "../services/linkServices";
+import skillServices from "../services/skillServices.js";
+import contactServices from "../services/contactServices.js";
+import educationServices from "../services/educationServices";
+import experienceServices from "../services/experienceServices";
 import MenuBar from "../components/MenuBar.vue";
 import jsPDF from 'jspdf';
 import Utils from "../config/utils.js";
@@ -18,20 +22,34 @@ const contactInfo = ref({
   email: ""
 });
 const professionalSummary = ref("");
-
-
-
-
+const skills = ref([{description :""}]);
+const educations = ref({
+  name: "",
+  city: "",
+  state: "",
+  startDate: "",
+  endDate: "",
+  degree: "",
+  gpa: "",
+  coursework: ""
+});
+const experiences = ref({
+  name: "",
+  position: "",
+  monthStart: "",
+  monthEnd: "",
+  description: ""
+});
 
 
 const sections = ref({
   personalLink: [],
-  education: [{ name: "School 1", checked: true }, { name: "School 2", checked: true }],
-  experience: [{ name: "Company 1", checked: true }, { name: "Company 2", checked: true }],
+  education: [{ name: "School 1", checked: true }],
+  experience: [{ name: "Company 1", checked: true }],
   projects: [{ name: "Project 1", checked: true }],
   skills: [{ name: "Skill 1", checked: true }],
   interests: [{ name: "Interest 1", checked: true }],
-  awards: [{ name: "Award 1", checked: true }, { name: "Award 2", checked: true }],
+  awards: [{ name: "Award 1", checked: true }],
 });
 
 
@@ -43,6 +61,10 @@ onMounted(() => {
   user.value = Utils.getStore('user')
   //console.log(user.value)
   fetchLinks();
+  fetchSkills();
+  fetchContact();
+  fetchEducation();
+  fetchExperiences();
 })
 
 // Fetch links from the database
@@ -57,6 +79,59 @@ const fetchLinks = () => {
     })
     .catch((error) => {
       console.error("Error fetching links:", error);
+    });
+};
+const fetchContact = () => {
+  contactServices.getAllContacts(user.value.studentId)
+    .then((response) => {
+      if (response.data && response.data.length > 0) {
+        contactInfo.value = response.data[0]; // Assuming only one contact entry per user
+      } else {
+        console.log("No contact info found.");
+      }
+      console.log("Fetched Contact Info:", contactInfo.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching contact info:", error);
+    });
+};
+const fetchSkills = () => {
+  skillServices.getAllSkills(user.value.studentId)
+    .then((response) => {
+      sections.value.skills = response.data.map((skill) => ({
+        name: skill.description,
+      }));
+      skills.value = response.data; // Assuming the backend returns an array of skills
+      console.log("Fetched skills:", skills.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching skills:", error);
+    })
+};
+const fetchEducation = () => {
+  educationServices.getAllEducations(user.value.studentId)
+    .then((response) => {
+      sections.value.education = response.data.map((edu) => ({
+        name: edu.name,
+      }));
+      educations.value = response.data; // Assuming the backend returns an array of links
+      console.log("Fetched Educations:", educations.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Educations:", error);
+    });
+};
+const fetchExperiences = () => {
+  experienceServices.getAllExperiences(user.value.studentId)
+    .then((response) => {
+      sections.value.experience = response.data.map((exp) => ({
+        name: exp.name,
+      }));
+      experiences.value = response.data; 
+      console.log("Fetched Experiences:", experiences.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Experiences:", error);
     });
 };
 
@@ -82,9 +157,8 @@ const generateResume1 = () => {
 
   doc.setFontSize(20);
   doc.setFont(font, "bold");
-  var tempString = "";
-  tempString += "first name";
-  doc.text('First last', pageCenter, currentY, {align: "center"}); currentY += 6;
+  var tempString = contactInfo.value.firstName + " " + contactInfo.value.lastName;
+  doc.text(tempString, pageCenter, currentY, {align: "center"}); currentY += 6;
   doc.setFont(font, "normal");
   AddContactInfo(doc, currentY, pageCenter);
   currentY += 15;
@@ -109,9 +183,8 @@ const generateResume1 = () => {
 const AddContactInfo = (doc, currentY, pageCenter) => {
   doc.setFontSize(11);
   var contactString = "";
-  contactString += "Oklahoma City | ";
-  contactString += "(555) 555-5555 | ";
-  contactString += "ike.theagle@oc.edu";
+  contactString = contactInfo.value.city + ", " + contactInfo.value.state + " | ";
+  contactString += contactInfo.value.email;
   //if(sections.personalLink.checked.value)
   for(let i=0; i<sections.value.personalLink.length; i++)
   {
@@ -119,7 +192,7 @@ const AddContactInfo = (doc, currentY, pageCenter) => {
     if(link.checked)
     {
       contactString += " | ";
-      contactString += personalLinks.value[0].link;
+      contactString += personalLinks.value[i].link;
       //contactString += link.name;
     }
   }
@@ -153,23 +226,25 @@ const AddEducationInfo = (doc, currentY) => {
     {
       // get school name and city and state
       doc.setFont(font, "bold");
-  var workName = "Oklahoma Christian University";
-  workName += ",";
+  var workName = educations.value[i].name + ",";
   var temp = doc.text(workName, 10, currentY);
   
   doc.setFont(font, "normal");
-  temp = "Oklahoma City, OK";
-  doc.text(temp, 10+(doc.getTextDimensions(workName).w * 1.1), currentY);
+  var cityState = educations.value[i].city + ", " + educations.value[i].state;
+  doc.text(cityState, 10+(doc.getTextDimensions(workName).w * 1.1), currentY);
 
-      
-      doc.text("Aug, 2021 - July 2025", pageWidth-10, currentY, {align:"right"});
+      var startEndDate = educations.value[i].startDate + " - " + educations.value[i].endDate;
+      doc.text(startEndDate, pageWidth-10, currentY, {align:"right"});
       currentY += lineHeight;
       doc.setFont(font, "italic");
-      doc.text("Bachelor of Arts /Bachelor of Science in XX /B.B.A in XX", 10, currentY); currentY += lineHeight;
+      doc.text(educations.value[i].degree, 10, currentY); currentY += lineHeight;
       doc.text("GPA: ", 10, currentY); 
-      doc.text("3.4", 20, currentY); currentY += lineHeight;
+      doc.text(educations.value[i].gpa, 20, currentY); currentY += lineHeight;
       doc.setFont(font, "normal");
-      doc.text("Coursework: Here is a project I did bla bla bla.", 10, currentY); currentY+=lineHeight;
+      if(educations.value[i].coursework != "")
+      {
+        doc.text("Coursework: " + educations.value[i].coursework, 10, currentY); currentY+=lineHeight;
+      }
     }
   }
   return currentY;
@@ -207,19 +282,20 @@ const AddExperienceInfo = (doc, currentY) => {
   doc.setFontSize(11);
   doc.setFont(font, "bold");
   var workName = "Oklahoma Christian University";
+  workName = experiences.value[i].name;
   workName += ",";
   var temp = doc.text(workName, 10, currentY);
   
   doc.setFont(font, "normal");
-  temp = "Professor, "
-  temp += "Oklahoma City, OK";
+  temp = experiences.value[i].position + ", ";
+  temp += experiences.value[i].state;
   doc.text(temp, 10+(doc.getTextDimensions(workName).w * 1.1), currentY);
   //console.log(doc.getTextDimensions(temp.text));
-  temp = "start month, Year";
-  temp += " - end month, Year";
+  temp = experiences.value[i].startDate + " - ";
+  temp += experiences.value[i].endDate;
   doc.text(temp, pageWidth-10, currentY, {align:"right"});
   currentY += 5;
-  temp = "This is the description for the job. It wasn't really set up to make bullet points so hopefully it can adapt for new lines. \nHopefully this is a new line";
+  temp = experiences.value[i].description;
   var splitSummary = doc.splitTextToSize(temp, pageWidth-40);
   doc.text(splitSummary, 20, currentY, {align: "left"});
   currentY += doc.getTextDimensions(splitSummary).h;
@@ -242,7 +318,7 @@ const AddSkills = (doc, currentY) => {
       doc.text('·', 15, currentY+1);
       doc.setFont(font, "italic");
       doc.setFontSize(11);
-      doc.text("This is a skill i learned blabla", 20, currentY);
+      doc.text(skills.value[i].description, 20, currentY);
       currentY += 5;
 
     }
