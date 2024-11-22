@@ -1,35 +1,42 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ProjectServices from "../services/projectServices"; // hypothetical service for managing project data
-import MenuBar from "../components/MenuBar.vue";
+import Utils from "../config/utils.js";
 
 const router = useRouter();
+const user = ref({}); 
+
 const project = ref({
   name: "",
   city: "",
   state: "",
-  monthStart: "",
-  monthEnd: "",
+  startDate: "",
+  endDate: "",
   position: "",
   description: ""
 });
 const message = ref("");
 
 const saveProject = () => {
-  ProjectServices.create(project.value)
+  ProjectServices.createProject(user.value.studentId,project.value)
     .then(() => {
       message.value = "Project saved successfully";
-      router.push({ name: "projectList" }); // hypothetical route name for project list
+      router.push({ name: "StudentInfo" }); // hypothetical route name for project list
     })
     .catch((e) => {
-      message.value = e.response.data.message || "An error occurred";
+      message.value =  "An error occurred";
     });
 };
 
 const cancel = () => {
-  router.push({ name: "projectList" }); // hypothetical route for cancel action
+  router.push({ name: "StudentInfo" });
 };
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  console.log(user.value)
+})
 </script>
 
 <template>
@@ -64,13 +71,13 @@ const cancel = () => {
 
             <div class="row">
               <v-text-field
-                v-model="project.monthStart"
+                v-model="project.startDate"
                 label="Start Month"
                 class="mr-2"
                 required
               ></v-text-field>
               <v-text-field
-                v-model="project.monthEnd"
+                v-model="project.endDate"
                 label="End Month"
                 required
               ></v-text-field>

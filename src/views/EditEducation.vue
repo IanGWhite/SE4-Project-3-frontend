@@ -1,37 +1,62 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref,onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import EducationServices from "../services/educationServices"; // hypothetical service for managing education data
 import MenuBar from "../components/MenuBar.vue";
+import Utils from "../config/utils.js";
+import StudentServices from "../services/studentServices.js";
+
+const route = useRoute();
 
 const router = useRouter();
-const user = ref(null); // Assuming user info may be needed, similar to your previous example
+const user = ref({}); // Assuming user info may be needed, similar to your previous example
+
 const education = ref({
   name: "",
   city: "",
   state: "",
-  monthStart: "",
-  monthEnd: "",
+  startDate: "",
+  endDate: "",
   degree: "",
-  gpa: null,
+  gpa: "",
   coursework: ""
 });
 const message = ref("");
 
-const saveEducation = () => {
-  EducationServices.create(education.value)
+const saveEducation = (id) => {
+  EducationServices.updateEducation(user.value.studentId, id ,education.value)
     .then(() => {
       message.value = "Education saved successfully";
-      router.push({ name: "educationList" }); // hypothetical route name for education list
+      router.push({ name: "StudentInfo" }); // hypothetical route name for education list
     })
     .catch((e) => {
-      message.value = e.response.data.message || "An error occurred";
+      message.value =  "An error occurred";
     });
 };
 
 const cancel = () => {
-  router.push({ name: "educationList" }); // hypothetical route for cancel action
+  router.push({ name: "StudentInfo" }); // hypothetical route for cancel action
 };
+
+const getEducation = async (id) => {
+      try {
+        const response = await EducationServices.getEducations(user.value.studentId, id);
+        education.value = response.data;
+      } catch (error) {
+        console.error('Failed to retrieve education data:');
+      }
+    };
+
+onMounted(() => {
+  user.value = Utils.getStore('user')
+  console.log(user.value)
+  const educationId = route.params.id;
+      if (educationId) {
+        getEducation(educationId);
+      } else {
+        console.error('No course ID provided in route');
+      }
+})
 </script>
 
 <template>
@@ -43,7 +68,7 @@ const cancel = () => {
         </v-card-title>
         <v-card-text>
           <p>{{ message }}</p>
-          <v-form @submit.prevent="saveEducation">
+          <v-form>
             <v-text-field
               v-model="education.name"
               label="Name"
@@ -66,13 +91,13 @@ const cancel = () => {
 
             <div class="row">
               <v-text-field
-                v-model="education.monthStart"
+                v-model="education.startDate"
                 label="Start Month"
                 class="mr-2"
                 required
               ></v-text-field>
               <v-text-field
-                v-model="education.monthEnd"
+                v-model="education.endDate"
                 label="Graduation Month"
                 required
               ></v-text-field>
@@ -100,7 +125,7 @@ const cancel = () => {
             ></v-textarea>
 
             <div class="buttons">
-              <v-btn color="primary" @click="saveEducation">Save</v-btn>
+              <v-btn color="primary" @click="saveEducation(route.params.id)">Save</v-btn>
               <v-btn color="error" @click="cancel">Cancel</v-btn>
             </div>
           </v-form>

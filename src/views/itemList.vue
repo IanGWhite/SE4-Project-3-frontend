@@ -6,7 +6,10 @@ import skillServices from "../services/skillServices.js";
 import contactServices from "../services/contactServices.js";
 import educationServices from "../services/educationServices";
 import experienceServices from "../services/experienceServices";
+import interestServices from "../services/interestServices.js";
+import projectServices from "../services/projectServices.js";
 import Utils from "../config/utils.js";
+import awardServices from "../services/awardServices.js";
 
 const router = useRouter();
 const user = ref({});
@@ -24,17 +27,20 @@ const personalLinks = ref([{ type: "", link: "" }]);
 const experiences = ref([{ name: ""}]);
 const educations = ref([{name: ""}]);
 const skills = ref([{description :""}]);
-const interests = ref([{interest: ""}]);
+const interests = ref([{description: ""}]);
+const projects = ref([{name : ""}]);
+const awards =  ref([{title: ""}]);
+ 
 
 const addPersonalLink = () => personalLinks.value.push({ type: "", link: "" }); 
 const addEducation = () => router.push({ name: 'addEducation' });
-const editEducation = () => router.push({ name: 'EditEducation' });
+const editEducation = (myEducation) => router.push({ name: 'EditEducation', params: { id: myEducation.id } });
 const addExperience = () => router.push({ name: 'AddExperience' });
-const editExperience = () => router.push({ name: 'EditExperience' });
+const editExperience = (myExperience) => router.push({ name: 'EditExperience', params: {id: myExperience.id} });
 const addProject = () => router.push({ name: 'AddProject' });
-const editProject = () => router.push({ name: 'EditProject' });
+const editProject = (myProject) => router.push({ name: 'EditProject', params: { id: myProject.id } });
 const addSkill = () => skills.value.push({ description: ""}); 
-const addInterest = () => interests.value.push({ interest: ""}); // this will be the code to add to the database
+const addInterest = () => interests.value.push({ description: ""});
 const addAward = () => router.push({ name: 'AddAward' });
 const editAward = () => router.push({ name: 'EditAward' });
 
@@ -76,6 +82,49 @@ const deleteLink = (index) => {
     personalLinks.value.splice(index, 1); // Remove locally if not saved to backend
   }
 };
+
+
+const deleteEducation = (myEducation) => {
+  if (myEducation.id) {
+    educationServices.deleteEducation(user.value.studentId, myEducation.id) // Delete link from backend
+      .then(() => {
+        console.log("Education deleted successfully");
+        fetchEducation();
+        educations.value.splice(myEducation.id, 1);
+      })
+      .catch((error) => {
+        console.error("Error deleting Education:", error);
+      });
+  }
+};
+
+
+const deleteProject = (myProject) => {
+  if (myProject.id) {
+    projectServices.deleteProject(user.value.studentId, myProject.id) // Delete link from backend
+      .then(() => {
+        console.log("Project deleted successfully");
+        fetchProject();
+        projects.value.splice(myProject.id, 1);
+      })
+      .catch((error) => {
+        console.error("Error deleting Project:", error);
+
+const deleteExperience = (myExperience) => {
+  if (myExperience.id) {
+    experienceServices.deleteExperience(user.value.studentId, myExperience.id) // Delete link from backend
+      .then(() => {
+        console.log("Education deleted successfully");
+        fetchExperiences();
+        experiences.value.splice(myExperience.id, 1);
+      })
+      .catch((error) => {
+        console.error("Error deleting Education:", error);
+
+      });
+  }
+};
+
 
 const saveSkill = (index) => {
   const skill = skills.value[index];
@@ -121,6 +170,7 @@ const deleteSkill = (index) => {
 };
 
 
+
 const saveContactInfo = () => {
  const contact = contactInfo.value;
   if (contact.id) {
@@ -144,6 +194,49 @@ const saveContactInfo = () => {
   }
 };
 
+const saveInterest = (index) => {
+  const interest = interests.value[index];
+  if (interest.id) {
+    // Update an existing interest
+    interestServices.updateInterest(user.value.studentId, interest.id, interest)
+      .then(() => {
+        console.log("Interest updated successfully:", interest);
+      })
+      .catch((error) => {
+        console.error("Error updating interest:", error.response?.data?.message || error.message);
+      });
+  } else {
+    // Create a new interest
+    interestServices.createInterest(user.value.studentId, interest)
+      .then((response) => {
+        interests.value[index].id = response.data.id; // Update the ID assigned by the backend
+        console.log("Interest added successfully:", interests.value[index]);
+      })
+      .catch((error) => {
+        console.error("Error saving interest:", error.response?.data?.message || error.message);
+      });
+  }
+};
+
+const deleteInterest = (index) => {
+  const interestToDelete = interests.value[index];
+  
+  if (interestToDelete.id) {
+    // Delete from backend if it has an ID
+    interestServices.deleteInterest(user.value.studentId, interestToDelete.id)
+      .then(() => {
+        interests.value.splice(index, 1); // Remove from local array
+        console.log("Interest deleted successfully:", interestToDelete);
+      })
+      .catch((error) => {
+        console.error("Error deleting interest:", error.response?.data?.message || error.message);
+      });
+  } else {
+    // If no ID, just remove locally
+    interests.value.splice(index, 1);
+  }
+};
+
 onMounted(() => {
   user.value = Utils.getStore('user')
   console.log(user.value)
@@ -152,6 +245,9 @@ onMounted(() => {
   fetchContact();
   fetchEducation();
   fetchExperiences();
+  fetchInterests();
+  fetchProject();
+  fetchAward();
 })
 
 // Fetch links from the database
@@ -166,7 +262,6 @@ const fetchLinks = () => {
     });
 };
 
-
 const fetchSkills = () => {
   skillServices.getAllSkills(user.value.studentId)
     .then((response) => {
@@ -177,6 +272,18 @@ const fetchSkills = () => {
       console.error("Error fetching skills:", error);
     })
 };
+
+const fetchInterests = () => {
+  interestServices.getAllInterests(user.value.studentId)
+    .then((response) => {
+      interests.value = response.data; 
+      console.log("Fetched interests:", interests.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching interests:", error);
+    })
+};
+
 const fetchContact = () => {
   contactServices.getAllContacts(user.value.studentId)
     .then((response) => {
@@ -206,11 +313,32 @@ const fetchExperiences = () => {
 const fetchEducation = () => {
   educationServices.getAllEducations(user.value.studentId)
     .then((response) => {
-      educations.value = response.data; // Assuming the backend returns an array of links
+      educations.value = response.data; 
       console.log("Fetched Educations:", educations.value);
     })
     .catch((error) => {
       console.error("Error fetching Educations:", error);
+    });
+};
+
+const fetchProject= () => {
+  projectServices.getAllProjects(user.value.studentId)
+    .then((response) => {
+      projects.value = response.data; 
+      console.log("Fetched Projects:", projects.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Projects:", error);
+    });
+};
+const fetchAward= () => {
+  awardServices.getAllAwards(user.value.studentId)
+    .then((response) => {
+      awards.value = response.data; 
+      console.log("Fetched Awards:", awards.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Awards:", error);
     });
 };
 
@@ -263,14 +391,14 @@ const fetchEducation = () => {
   <v-card-title>Education</v-card-title>
   <v-card-text>
     <v-row v-for="(education, index) in educations" :key="index">
-      <v-col cols="5">
+      <v-col cols="10">
         <v-card-text> {{ education.name }}</v-card-text>
       </v-col>
       <v-col cols="2">
-        <v-btn icon @click="deleteEducation(index)">
+        <v-btn icon @click="deleteEducation(education)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
-        <v-btn icon @click="editEducation(index)">
+        <v-btn icon @click="editEducation(education)">
           Edit
         </v-btn>
       </v-col>
@@ -283,14 +411,14 @@ const fetchEducation = () => {
   <v-card-title>Experience</v-card-title>
   <v-card-text>
     <v-row v-for="(experience, index) in experiences" :key="index">
-      <v-col cols="5">
+      <v-col cols="10">
         <v-card-text> {{ experience.name }}</v-card-text>
       </v-col>
       <v-col cols="2">
-        <v-btn icon @click="deleteExperience(index)">
+        <v-btn icon @click="deleteExperience(experience)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
-        <v-btn icon @click="editExperience(index)">
+        <v-btn icon @click="editExperience(experience)">
           Edit
         </v-btn>
       </v-col>
@@ -303,15 +431,15 @@ const fetchEducation = () => {
   <v-card class="mb-6">
     <v-card-title>Project</v-card-title>
     <v-card-text>
-      <v-row >
+      <v-row v-for="(project, index) in projects" :key="index">
         <v-col cols="10">
-          <v-card-text> Project</v-card-text>
+          <v-card-text> {{ project.name }}</v-card-text>
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="section.items.splice(i, 1)">
+          <v-btn icon @click="deleteProject(project)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="editProject">
+          <v-btn icon @click="editProject(project)">
             <v-icon>mdi-edit</v-icon>
           </v-btn>
         </v-col>
@@ -344,14 +472,17 @@ const fetchEducation = () => {
   <v-card class="mb-6">
     <v-card-title>Interests</v-card-title>
     <v-card-text>
-      <v-row v-for="(link, index) in interests" :key="index">
+      <v-row v-for="(interest, index) in interests" :key="index">
         <v-col cols="10">
-          <v-text-field v-model="link.type" label="Interests" />
+          <v-text-field v-model="interest.description" label="Interests" />
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="interests.splice(index, 1)">
+          <v-btn icon @click="deleteInterest(interest)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
+          <v-btn icon @click="saveInterest(interest)">
+            Save
+          </v-btn> 
         </v-col>
       </v-row>
       <v-btn color="blue" text @click="addInterest">+ Add Interest</v-btn>
@@ -360,22 +491,22 @@ const fetchEducation = () => {
 
 
   <v-card class="mb-6">
-    <v-card-title>Award</v-card-title>
+    <v-card-title>Awards</v-card-title>
     <v-card-text>
-      <v-row >
+      <v-row v-for="(award, index) in awards" :key="index">
         <v-col cols="10">
-          <v-card-text> Award</v-card-text>
+          <v-card-text> {{ award.title }}</v-card-text>
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="section.items.splice(i, 1)">
+          <v-btn icon @click="deleteAward(award)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="editAward">
-            <v-icon>mdi-edit</v-icon>
-          </v-btn>
+          <v-btn icon @click="editAward(award)">
+            Edit
+          </v-btn> 
         </v-col>
       </v-row>
-      <v-btn color="blue" text @click="addAward">+ Add</v-btn>
+      <v-btn color="blue" text @click="addAward">+ Add Award</v-btn>
     </v-card-text>
   </v-card>
   </v-container>
