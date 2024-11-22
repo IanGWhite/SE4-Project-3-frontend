@@ -8,8 +8,9 @@ import educationServices from "../services/educationServices";
 import experienceServices from "../services/experienceServices";
 import interestServices from "../services/interestServices.js";
 import projectServices from "../services/projectServices.js";
-import Utils from "../config/utils.js";
 import awardServices from "../services/awardServices.js";
+import Utils from "../config/utils.js";
+
 
 const router = useRouter();
 const user = ref({});
@@ -42,7 +43,7 @@ const editProject = () => router.push({ name: 'EditProject' });
 const addSkill = () => skills.value.push({ description: ""}); 
 const addInterest = () => interests.value.push({ description: ""});
 const addAward = () => router.push({ name: 'AddAward' });
-const editAward = () => router.push({ name: 'EditAward' });
+const editAward = (myAward) => router.push({ name: 'EditAward', params: { id: myAward.id } });
 
 const savePersonalLink = (index) => {
   const link = personalLinks.value[index];
@@ -108,6 +109,20 @@ const deleteExperience = (myExperience) => {
       })
       .catch((error) => {
         console.error("Error deleting Education:", error);
+      });
+  }
+};
+
+const deleteAward = (myAward) => {
+  if (myAward.id) {
+    awardServices.deleteAward(user.value.studentId, myAward.id) // Delete link from backend
+      .then(() => {
+        console.log("Award deleted successfully");
+        fetchAward();
+        experiences.value.splice(myAward.id, 1);
+      })
+      .catch((error) => {
+        console.error("Error deleting Award:", error);
       });
   }
 };
