@@ -7,6 +7,9 @@ import skillServices from "../services/skillServices.js";
 import contactServices from "../services/contactServices.js";
 import educationServices from "../services/educationServices";
 import experienceServices from "../services/experienceServices";
+import interestServices from "../services/interestServices.js";
+import projectServices from "../services/projectServices.js";
+import awardServices from "../services/awardServices.js";
 import MenuBar from "../components/MenuBar.vue";
 import jsPDF from 'jspdf';
 import Utils from "../config/utils.js";
@@ -23,6 +26,7 @@ const contactInfo = ref({
 });
 const professionalSummary = ref("");
 const skills = ref([{description :""}]);
+const interests = ref([{description :""}]);
 const educations = ref({
   name: "",
   city: "",
@@ -38,6 +42,22 @@ const experiences = ref({
   position: "",
   monthStart: "",
   monthEnd: "",
+  description: ""
+});
+const awards = ref({
+  organization: "",
+  title: "",
+  monthStart: "",
+  monthEnd: "",
+  description: ""
+});
+const projects = ref({
+  name: "",
+  city: "",
+  state: "",
+  startDate: "",
+  endDate: "",
+  position: "",
   description: ""
 });
 
@@ -65,6 +85,9 @@ onMounted(() => {
   fetchContact();
   fetchEducation();
   fetchExperiences();
+  fetchInterests();
+  fetchProject();
+  fetchAward();
 })
 
 // Fetch links from the database
@@ -132,6 +155,46 @@ const fetchExperiences = () => {
     })
     .catch((error) => {
       console.error("Error fetching Experiences:", error);
+    });
+};
+const fetchInterests = () => {
+  interestServices.getAllInterests(user.value.studentId)
+    .then((response) => {
+      interests.value = response.data; 
+      sections.value.interests = response.data.map((interest) => ({
+        name: interest.description,
+      }));
+      interests.value = response.data; 
+      console.log("Fetched interests:", interests.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching interests:", error);
+    })
+};
+const fetchProject= () => {
+  projectServices.getAllProjects(user.value.studentId)
+    .then((response) => {
+      sections.value.projects = response.data.map((project) => ({
+        name: project.name,
+      }));
+      projects.value = response.data; 
+      console.log("Fetched Projects:", projects.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Projects:", error);
+    });
+};
+const fetchAward= () => {
+  awardServices.getAllAwards(user.value.studentId)
+    .then((response) => {
+      sections.value.awards = response.data.map((award) => ({
+        name: award.description,
+      }));
+      awards.value = response.data; 
+      console.log("Fetched Awards:", awards.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching Awards:", error);
     });
 };
 
@@ -252,20 +315,22 @@ const AddEducationInfo = (doc, currentY) => {
 
 const AddAwardInfo = (doc, currentY) => {
   var pageWidth = doc.internal.pageSize.getWidth(); 
+  if(sections.value.awards.length >= 1)
+  {
+    doc.setFont(font, "italic");
+      doc.text("Awards: ", 10, currentY);
+      doc.setFont(font, "normal");
+  }
   for(let i=0; i<sections.value.awards.length; i++)
   {
     var award = sections.value.awards[i];
     if(award.checked)
     {
-      doc.setFont(font, "italic");
-      doc.text("Awards: ", 10, currentY);
-      doc.setFont(font, "normal");
-      doc.text("award title", 24, currentY);
-      doc.text("Feb, 2023 - July 2023", pageWidth-10, currentY, {align:"right"});
+      doc.text(awards.value[i].title, 24, currentY);
+      doc.text(awards.value[i].startDate, pageWidth-10, currentY, {align:"right"});
       currentY += 5;
-      doc.text("this is where the award description goes", 15, currentY); currentY += 5;
+      doc.text(awards.value[i].description, 15, currentY); currentY += 5;
       
-
     }
   }
   return currentY;
@@ -318,7 +383,7 @@ const AddSkills = (doc, currentY) => {
       doc.text('·', 15, currentY+1);
       doc.setFont(font, "italic");
       doc.setFontSize(11);
-      doc.text(skills.value[i].description, 20, currentY);
+      doc.text(interests.value[i].description, 20, currentY);
       currentY += 5;
 
     }

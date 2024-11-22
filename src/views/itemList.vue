@@ -109,6 +109,9 @@ const deleteProject = (myProject) => {
       })
       .catch((error) => {
         console.error("Error deleting Project:", error);
+      });
+    }
+  };
 
 const deleteExperience = (myExperience) => {
   if (myExperience.id) {
