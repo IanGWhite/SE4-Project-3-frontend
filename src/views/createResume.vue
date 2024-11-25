@@ -383,7 +383,7 @@ const AddSkills = (doc, currentY) => {
       doc.text('·', 15, currentY+1);
       doc.setFont(font, "italic");
       doc.setFontSize(11);
-      doc.text(interests.value[i].description, 20, currentY);
+      doc.text(skills.value[i].description, 20, currentY);
       currentY += 5;
 
     }
@@ -398,7 +398,7 @@ const AddSkills = (doc, currentY) => {
       doc.text('·', 15, currentY+1);
       doc.setFont(font, "italic");
       doc.setFontSize(11);
-      doc.text("Here's an interest", 20, currentY);
+      doc.text(interests.value[i].description, 20, currentY);
       currentY += 5;
 
     }
