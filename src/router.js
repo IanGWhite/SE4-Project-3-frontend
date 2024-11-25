@@ -35,8 +35,8 @@ const router = createRouter({
       component: AddAward,
     },
     {
-      path: "/editAward/:id",
-      name: "editAward",
+      path: "/EditAward/:id",
+      name: "EditAward",
       component: EditAward,
       props: true,
     },
