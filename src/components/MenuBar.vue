@@ -9,8 +9,17 @@ import AuthServices from "../services/authServices";
 const router = useRouter();
 const drawer = ref(false); 
 
+const isAuthenticated = () => AuthServices.isLoggedIn();
+const checkAuthAndExecute = (callback) => {
+  if (isAuthenticated()) {
+    callback();
+  } else {
+    alert('You must be logged in to access this page.');
+    router.push({ name: 'LoginPage' }); // Redirect to the login page.
+  }
+};
 
-const goToResume = () => router.push({ name: 'ResumeListStudents' });
+const goToResume = () => checkAuthAndExecute(() => router.push({ name: 'ResumeListStudents' }));
 const goToInfo = () => router.push({ name: 'StudentInfo' });
 
 const logout = async (response) => {
@@ -56,7 +65,7 @@ const navigateTo = (routeName) => {
         <v-list-item-content style="width: auto; overflow: visible;">
           <v-btn  class="drop-btn" @click="navigateTo('StudentHome')">Student Home</v-btn>
           <v-btn   class="drop-btn" @click="navigateTo('TeacherHome')">Teacher Home</v-btn>
-          <v-btn  class="drop-btn" @click="signOut">Sign Out</v-btn>
+          <v-btn  class="drop-btn" @click="logout">Sign Out</v-btn>
         </v-list-item-content>
       </v-list-item>
       </v-list>
