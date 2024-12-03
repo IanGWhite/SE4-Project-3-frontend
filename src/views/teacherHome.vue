@@ -6,7 +6,7 @@ import MenuBar from "../components/MenuBar.vue";
 const router = useRouter();
 
 const goToResume = () => {
-  router.push({ name: 'resume' });
+  router.push({ name: 'ResumeListTeacher' });
 };
 
 const goToInfo = () => {

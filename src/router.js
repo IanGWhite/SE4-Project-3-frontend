@@ -19,6 +19,7 @@ import StudentHome from "./views/studentHome.vue";
 import TeacherHome from "./views/teacherHome.vue";
 import ViewStudentResume from "./views/viewStudentResumeList.vue";
 import commentStudentResume from "./views/commentStudentResuma.vue";
+import ResumeListTeacher from "./views/resumeListTeacher.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -99,6 +100,11 @@ const router = createRouter({
       path: "/ResumeListStudents",
       name: "ResumeListStudents",
       component: ResumeListStudents,
+    },
+    {
+      path: "/ResumeListTeacher",
+      name: "ResumeListTeacher",
+      component: ResumeListTeacher,
     },
     {
       path: "/StudentHome",
