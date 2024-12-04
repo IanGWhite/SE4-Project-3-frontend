@@ -29,7 +29,7 @@ const apiClient = axios.create({
     }
     return JSON.stringify(data);
   },
-  transformResponse: function (data) {
+  /*transformResponse: function (data) {
     data = JSON.parse(data);
     // if (!data.success && data.code == "expired-session") {
     //   localStorage.deleteItem("user");
@@ -48,7 +48,7 @@ const apiClient = axios.create({
     }
     // console.log(Utils.getStore("user"))
     return data;
-  },
+  },*/
 });
 
 export default apiClient;

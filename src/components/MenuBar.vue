@@ -10,7 +10,7 @@ import userServices from "../services/userServices.js";
 
 const router = useRouter();
 const drawer = ref(false); 
-const user = ref(null)
+const user = ref(null);
 
 const userService = ref([{ id: "", admin: 0 }]);
 const isAdmin = ref(userService.value.admin);
@@ -24,6 +24,7 @@ const logout = async (response) => {
   await AuthServices.logoutUser(token)
     .then(() => {
       Utils.setStore("user", null);
+      user = ref(null);
       router.push({ name: "login" });
     })
     .catch((error) => {
@@ -35,6 +36,7 @@ const logout = async (response) => {
 const navigateTo = (routeName) => {
   if(user.value != null)
   {
+    console.log(user.value);
     router.push({ name: routeName });
   }
   drawer.value = false; //Close drawer after navigation
