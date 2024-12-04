@@ -32,7 +32,10 @@ const logout = async (response) => {
 };
 
 const navigateTo = (routeName) => {
-  router.push({ name: routeName });
+  if(user.value != null)
+  {
+    router.push({ name: routeName });
+  }
   drawer.value = false; //Close drawer after navigation
 };
 
