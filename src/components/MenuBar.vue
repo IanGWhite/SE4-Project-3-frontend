@@ -17,17 +17,17 @@ const isAdmin = ref(userService.value.admin);
 
 
 
+
 const logout = async (response) => {
-  let token = {
-    credential: response.credential,
-  };
-  await AuthServices.logoutUser(token)
+  await AuthServices.logoutUser(user.value)
     .then(() => {
+      Utils.setStore("user", null);
       router.push({ name: "login" });
     })
     .catch((error) => {
       console.log("error", error);
     });
+    
 };
 
 const navigateTo = (routeName) => {
@@ -39,6 +39,7 @@ const navigateTo = (routeName) => {
 };
 
 onMounted(() => {
+
   user.value = store.getters.getLoginUserInfo;
   fetchUser();
   if(user.value == null)
@@ -47,7 +48,9 @@ onMounted(() => {
 }
 });
 
+
 const fetchUser= () => {
+
   userServices.getUser(1)
   .then((response) => {
     userService.value = response.data;
@@ -86,8 +89,7 @@ const fetchUser= () => {
           <v-btn v-if="isAdmin"  class="drop-btn" @click="navigateTo('TeacherHome')">Teacher Home</v-btn>
           
           <v-btn v-if="user" class="drop-btn" @click="logout">Sign Out</v-btn>
-            
-          
+
         </v-list-item-content>
       </v-list-item>
       </v-list>
