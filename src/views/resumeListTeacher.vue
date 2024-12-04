@@ -48,7 +48,7 @@ const fetchResumes = () => {
     students.value = response.data.map((resume) => ({
         resumes: resume.value,
       }));
-      console.log("Fetched students:", students[i].value.resumes);
+      //console.log("Fetched resumes:", students.value[i].resumes.value);
     })
     .catch((error) => {
       console.error("Error fetching links:", error);
