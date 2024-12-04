@@ -14,16 +14,14 @@ const goToResume = () => router.push({ name: 'ResumeListStudents' });
 const goToInfo = () => router.push({ name: 'StudentInfo' });
 
 const logout = async (response) => {
-  let token = {
-    credential: response.credential,
-  };
-  await AuthServices.logoutUser(token)
+  await AuthServices.logoutUser(user.value)
     .then(() => {
       router.push({ name: "login" });
     })
     .catch((error) => {
       console.log("error", error);
     });
+    
 };
 
 const navigateTo = (routeName) => {
