@@ -4,20 +4,19 @@ import { useRouter } from "vue-router";
 
 import logoutUser from "../services/authServices";
 import Utils from "../config/utils.js";
+import store from "../store/store.js";
 import AuthServices from "../services/authServices";
+import userServices from "../services/userServices.js";
 
 const router = useRouter();
 const drawer = ref(false); 
-const user = ref(null);
+const user = ref(null)
 
 const userService = ref([{ id: "", admin: 0 }]);
 const isAdmin = ref(userService.value.admin);
 
 
 
-
-const goToResume = () => router.push({ name: 'ResumeListStudents' });
-const goToInfo = () => router.push({ name: 'StudentInfo' });
 
 const logout = async (response) => {
   await AuthServices.logoutUser(user.value)
@@ -39,10 +38,8 @@ const navigateTo = (routeName) => {
   drawer.value = false; //Close drawer after navigation
 };
 
-  user.value = Utils.getStore('user')
-  console.log(user.value)
+onMounted(() => {
 
-  onMounted(() => {
   user.value = store.getters.getLoginUserInfo;
   fetchUser();
   if(user.value == null)
@@ -51,7 +48,9 @@ const navigateTo = (routeName) => {
 }
 });
 
-  const fetchUser= () => {
+
+const fetchUser= () => {
+
   userServices.getUser(1)
   .then((response) => {
     userService.value = response.data;
@@ -72,8 +71,9 @@ const navigateTo = (routeName) => {
       </div>
       
       <div class="menu-buttons">
-        <v-btn color="lightBlue" class="mx-2" @click="goToResume">Resume</v-btn>
-        <v-btn color="lightBlue" class="mx-2" @click="goToInfo">Info</v-btn>
+        <!-- <v-btn color="lightBlue" class="mx-2" @click="goToResume">Resume</v-btn> -->
+        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('ResumeListStudents')">Resume</v-btn>
+        <v-btn color="lightBlue" class="mx-2" @click="navigateTo('StudentInfo')">Info</v-btn>
 
         <!-- <v-avatar color="brown" size="40px" class="mx-2" @click="toggleDrawer"></v-avatar> -->
       </div>
@@ -86,8 +86,10 @@ const navigateTo = (routeName) => {
         <v-list-item>
         <v-list-item-content style="width: auto; overflow: visible;">
           <v-btn  class="drop-btn" @click="navigateTo('StudentHome')">Student Home</v-btn>
-          <v-btn   class="drop-btn" @click="navigateTo('TeacherHome')">Teacher Home</v-btn>
-          <v-btn  class="drop-btn" @click="logout">Sign Out</v-btn>
+          <v-btn v-if="isAdmin"  class="drop-btn" @click="navigateTo('TeacherHome')">Teacher Home</v-btn>
+          
+          <v-btn v-if="user" class="drop-btn" @click="logout">Sign Out</v-btn>
+
         </v-list-item-content>
       </v-list-item>
       </v-list>
