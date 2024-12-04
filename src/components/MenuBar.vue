@@ -8,7 +8,7 @@ import AuthServices from "../services/authServices";
 
 const router = useRouter();
 const drawer = ref(false); 
-const user = ref({});
+const user = ref(null);
 
 const userService = ref([{ id: "", admin: 0 }]);
 const isAdmin = ref(userService.value.admin);
