@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 import logoutUser from "../services/authServices";
@@ -8,6 +8,7 @@ import AuthServices from "../services/authServices";
 
 const router = useRouter();
 const drawer = ref(false); 
+const user = ref({});
 
 
 const goToResume = () => router.push({ name: 'ResumeListStudents' });
@@ -16,6 +17,7 @@ const goToInfo = () => router.push({ name: 'StudentInfo' });
 const logout = async (response) => {
   await AuthServices.logoutUser(user.value)
     .then(() => {
+      Utils.setStore("user", null);
       router.push({ name: "login" });
     })
     .catch((error) => {
@@ -28,6 +30,9 @@ const navigateTo = (routeName) => {
   router.push({ name: routeName });
   drawer.value = false; //Close drawer after navigation
 };
+
+  user.value = Utils.getStore('user')
+  console.log(user.value)
 </script>
 
 <template>
@@ -54,7 +59,7 @@ const navigateTo = (routeName) => {
         <v-list-item-content style="width: auto; overflow: visible;">
           <v-btn  class="drop-btn" @click="navigateTo('StudentHome')">Student Home</v-btn>
           <v-btn   class="drop-btn" @click="navigateTo('TeacherHome')">Teacher Home</v-btn>
-          <v-btn  class="drop-btn" @click="signOut">Sign Out</v-btn>
+          <v-btn  class="drop-btn" @click="logout">Sign Out</v-btn>
         </v-list-item-content>
       </v-list-item>
       </v-list>
