@@ -19,7 +19,9 @@ const isAdmin = ref(userService.value.admin);
 
 
 const logout = async (response) => {
-  await AuthServices.logoutUser(user.value)
+  console.log(user.value.token)
+  const token = {token: user.value.token}
+  await AuthServices.logoutUser(token)
     .then(() => {
       Utils.setStore("user", null);
       router.push({ name: "login" });
