@@ -10,6 +10,11 @@ const router = useRouter();
 const drawer = ref(false); 
 const user = ref({});
 
+const userService = ref([{ id: "", admin: 0 }]);
+const isAdmin = ref(userService.value.admin);
+
+
+
 
 const goToResume = () => router.push({ name: 'ResumeListStudents' });
 const goToInfo = () => router.push({ name: 'StudentInfo' });
@@ -33,6 +38,15 @@ const navigateTo = (routeName) => {
 
   user.value = Utils.getStore('user')
   console.log(user.value)
+
+  onMounted(() => {
+  user.value = store.getters.getLoginUserInfo;
+  fetchUser();
+  if(user.value == null)
+{//put user to log in page if they try to access a page without logging in
+  router.push('Login');
+}
+});
 
   const fetchUser= () => {
   userServices.getUser(1)
