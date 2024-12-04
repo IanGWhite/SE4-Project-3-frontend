@@ -495,10 +495,10 @@ const fetchAward= () => {
           <v-text-field v-model="interest.description" label="Interests" />
         </v-col>
         <v-col cols="2">
-          <v-btn icon @click="deleteInterest(interest)">
+          <v-btn icon @click="deleteInterest(index)">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
-          <v-btn icon @click="saveInterest(interest)">
+          <v-btn icon @click="saveInterest(index)">
             Save
           </v-btn> 
         </v-col>
