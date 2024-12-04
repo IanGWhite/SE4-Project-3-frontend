@@ -33,6 +33,17 @@ const navigateTo = (routeName) => {
 
   user.value = Utils.getStore('user')
   console.log(user.value)
+
+  const fetchUser= () => {
+  userServices.getUser(1)
+  .then((response) => {
+    userService.value = response.data;
+    isAdmin.value = userService.value.admin;
+  })
+  .catch((error) => {
+      console.error("Error fetching user:", error);
+    });
+};
 </script>
 
 <template>
