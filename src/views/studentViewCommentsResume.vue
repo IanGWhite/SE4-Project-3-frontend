@@ -1,6 +1,8 @@
 <script setup>
-import { ref,onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import Utils from "../config/utils.js";
+import commentServices from "../services/commentServices.js";
+import { useRouter, useRoute } from "vue-router";
 import linkServices from "../services/linkServices";
 import skillServices from "../services/skillServices.js";
 import contactServices from "../services/contactServices.js";
@@ -10,7 +12,6 @@ import interestServices from "../services/interestServices.js";
 import projectServices from "../services/projectServices.js";
 import awardServices from "../services/awardServices.js";
 import jsPDF from 'jspdf';
-import Utils from "../config/utils.js";
 import resumeExperienceServices from "../services/resumeExperienceServices.js";
 import resumeEducationServices from "../services/resumeEducationServices.js";
 import resumeLinkServices from "../services/resumeLinkServices.js";
@@ -20,97 +21,99 @@ import resumeProjectServices from "../services/resumeProjectServices.js";
 import resumeSkillServices from "../services/resumeSkillServices.js";
 import resumeService from "../services/resumeService.js";
 
+
+const user = Utils.getStore("user");
+const pdfUrl = "path/to/resume.pdf"; // URL for the PDF
+
+const comments = ref([]);
+const newComment = ref("");
+
+const loadComments = (resumeId) => {
+  commentServices.getAllComments(user.value.studentId,resumeId).then((response) => { 
+    comments.value = response.data;
+  }).catch((error) => {
+    console.error("Error loading comments:", error);
+  });
+};
+
+const addComment = (resumeId) => {
+  if (newComment.value.trim()) {
+    const comment = {
+      text: newComment.value,
+      user: user.fName + " " + user.lName,
+      date: new Date().toLocaleString()
+    };
+    
+    resumeService.addComment(resumeId, comment)
+      .then(() => {
+        comments.value.unshift(comment); // Add new comment at the top
+        newComment.value = "";
+      })
+      .catch((error) => {
+        console.error("Error adding comment:", error);
+      });
+  }
+};
+
 const resumes = ref([]);
-const user = ref({});
 const router = useRouter();
+const route = useRoute();
+const pdfBlobUrl = ref(null);
 
 const refreshPage = () => {
   window.location.reload();
 };
 
-const fetchResumes = () => {
-  resumeService.getAllResumes(user.value.studentId)
-    .then((response) => {
-      resumes.value = response.data; // Assuming the backend returns an array of resumes
-      console.log("Fetched resumes:", resumes.value);
-    })
-    .catch((error) => {
-      console.error("Error fetching resumes:", error);
-    });
-};
 
-const addNewResume = () => {
-  console.log("Add a new resume");
-  router.push({ name: 'CreateResume' });
-};
 
-const editResume = (resume) => {
-  console.log("Editing resume:", resume);
-};
 
-const deleteResume =  (resumeId) => {
-  if (confirm("Are you sure you want to delete this resume?")) {
-      console.log(resumeId);
-      resumeService.deleteResume(user.value.studentId, resumeId).then( () => {
-        console.log("Resume deleted:", resumeId);
-        fetchResumes();
-      })
-    .catch ((error) => {
-      console.error("Error deleting resume:", error);
-    })
-  }
-};
 
-const seeResumeComments = (resume) => {
-  console.log(resume.id);
-  router.push({ name: 'studentViewCommentsResume', params: {id: resume.id} })
-}
-
-//const editExperience = (myExperience) => router.push({ name: 'EditExperience', params: {id: myExperience.id} });
-
-const downloadResume = async (resume) => {
+const CreateResume = async (resumeId) => {
   //thisResumeId = resumeId;
   try {
     console.log("Resume data being saved:", {
-      resumeData,
+      resumeName,
       personalLinks,
       sections,
     });
-    await fetchLinks(resume.id);
-    await fetchLinks(resume.id);
+    await fetchLinks(resumeId);
+    await fetchLinks(resumeId);
     fetchContact();
-    fetchSummary(resume.id);
-    await fetchSkills(resume.id);
-    await fetchInterests(resume.id);
-    await fetchEducations(resume.id);
-    await fetchAwards(resume.id);
-    await fetchExperiences(resume.id);
+    fetchSummary(resumeId);
+    await fetchSkills(resumeId);
+    await fetchInterests(resumeId);
+    await fetchEducations(resumeId);
+    await fetchAwards(resumeId);
+    await fetchExperiences(resumeId);
     // Generate resume logic
   } catch (error) {
     console.error("Error occurred in getting the data:", error);
   }
   try {
-    middleGround();
+    generateResume1();
     //refreshPage();
   } catch (error){
     console.error("Error occurred in making the resume:", error);
   }
 };
 
-const middleGround = () => {
-  generateResume1();
-};
-
-
 onMounted(() => {
+  const resumeId = route.params.id;
   user.value = Utils.getStore('user');
   console.log(user.value);
-  fetchResumes();
+  console.log(resumeId);
+  
+  CreateResume(resumeId);
+      if (resumeId) {
+        loadComments(resumeId);
+      } else {
+        console.error('No resume ID provided in route');
+      }
 });
 
 const thisResumeId = ref({});
 //const resumeName = ref("");
-const resumeData = ref({
+const resumeName = ref({
   name: "",
   summary: "",
 });
@@ -250,6 +253,7 @@ const fetchSummary = (resumeId) => {
       console.log("API Response:", response);  // Check the full response structure
       if (response.data && response.data.summary) {
         summary.value = response.data.summary;
+        resumeName.value = response.data.name;
         console.log("Summary data fetched:", summary.value); // Check the summary value
       } else {
         console.error("Summary not found in API response.");
@@ -517,7 +521,9 @@ const generateResume1 = () => {
   
    currentY = AddSkills(doc, currentY);
   
-  doc.output('dataurlnewwindow');
+  // doc.output('dataurlnewwindow');
+  const pdfBlob = doc.output("blob");
+  pdfBlobUrl.value = URL.createObjectURL(pdfBlob);
   //doc.save("Resume");
 };
 
@@ -708,73 +714,51 @@ const AddHeader = (doc, currentY, title) => {
 </script>
 
 <template>
-  <v-container>
-    <v-card class="mt-3">
-      <v-card-title>Resumes</v-card-title>
-      <v-divider></v-divider>
-      <v-card-text>
-        <v-accordion>
-          <template v-if="resumes.length > 0">
-            <template v-for="(resume, index) in resumes" :key="index">
-              <v-card flat class="pt-2">
-                <v-row align="center">
-                  <v-col cols="8">
-                    <span class="resume-name">{{ resume.name }}</span>
-                  </v-col>
-                  <v-col cols="4" class="text-right">
-                    <v-btn icon color="blue" @click="seeResumeComments(resume)">
-                      <v-icon>mdi-comment</v-icon>
-                    </v-btn>
-                    <v-btn icon color="blue" @click="downloadResume(resume)">
-                      <v-icon>mdi-download</v-icon>
-                    </v-btn>
-                    <v-btn icon color="blue" @click="editResume(resume)">
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-btn icon color="blue" @click="deleteResume(resume.id)">
-                      <v-icon>mdi-delete</v-icon>
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </v-card>
-              <v-divider v-if="index < resumes.length - 1"></v-divider>
-            </template>
-          </template>
-          <template v-else>
-            <p>No resumes available. Add a new one!</p>
-          </template>
-        </v-accordion>
-      </v-card-text>
-      <v-card-actions class="text-right mt-5">
-        <v-btn
-          class="add-resume-button"
-          color="blue"
-          @click="addNewResume"
-        >
-          <v-icon class="add-icon">mdi-plus</v-icon>
-        </v-btn>
-      </v-card-actions>
+  <v-app>
+    <v-container>
+      <v-toolbar color="blue">
+        <v-toolbar-title>{{ resumeName.name }}</v-toolbar-title>
+      </v-toolbar>
+      <br />
+      
+      <!-- PDF Viewer -->
+      <v-card v-if="pdfBlobUrl" class="pdf-container">
+        <iframe :src="pdfBlobUrl" width="100%" height="600px" frameborder="0"></iframe>
+      </v-card>
 
-    </v-card>
-  </v-container>
+
+      <!-- Display Comments -->
+      <v-card class="my-4" outlined>
+        <v-card-title>Comments</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text v-if="comments.length === 0">No comments available</v-card-text>
+        <v-card-text v-for="(comment, index) in comments" :key="index" class="my-2">
+          <v-card outlined class="p-2">
+            <p><strong>{{ comment.user }}</strong> ({{ comment.date }})</p>
+            <p>{{ comment.text }}</p>
+          </v-card>
+        </v-card-text>
+      </v-card>
+    </v-container>
+  </v-app>
 </template>
 
 <style scoped>
-.resume-name {
-  font-size: 1.25rem;
-  font-weight: bold;
+iframe {
+  border-radius: 8px;
 }
-.add-resume-button {
-  width: 150px; /* Longer button */
-  height: 56px; /* Maintain height */
-  border-radius: 8px; /* Rounded corners */
-  display: flex; /* Center content */
-  align-items: center;
-  justify-content: center;
+.pdf-container {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }
-
-.add-icon {
-  font-size: 30px; /* Ensure icon size remains prominent */
+.v-toolbar {
+  padding: 16px;
+  background-color: #6200ea; /* Primary color example */
 }
 
-</style> 
+.v-toolbar-title {
+  font-size: 20px;
+  color: white;
+}
+</style>
