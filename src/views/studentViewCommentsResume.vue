@@ -29,30 +29,16 @@ const comments = ref([]);
 const newComment = ref("");
 
 const loadComments = (resumeId) => {
-  commentServices.getAllComments(user.value.studentId,resumeId).then((response) => { 
-    comments.value = response.data;
-  }).catch((error) => {
-    console.error("Error loading comments:", error);
-  });
-};
-
-const addComment = (resumeId) => {
-  if (newComment.value.trim()) {
-    const comment = {
-      text: newComment.value,
-      user: user.fName + " " + user.lName,
-      date: new Date().toLocaleString()
-    };
-    
-    resumeService.addComment(resumeId, comment)
-      .then(() => {
-        comments.value.unshift(comment); // Add new comment at the top
-        newComment.value = "";
-      })
-      .catch((error) => {
-        console.error("Error adding comment:", error);
-      });
-  }
+  commentServices.getAllComments(user.value.studentId, resumeId)
+  .then((response) => {
+      comments.value = response.data;
+      console.log("retrived comments ", comments.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching comments:", error);
+      currentComment.value = "";
+      //create a comment
+    });
 };
 
 const resumes = ref([]);
@@ -113,10 +99,6 @@ onMounted(() => {
 
 const thisResumeId = ref({});
 const resumeName = ref({});
-// const resumeName = ref({
-//   name: "",
-//   summary: "",
-// });
 const personalLinks = ref([
   { type: "", link: "" }
 ]);
@@ -129,7 +111,6 @@ const contactInfo = ref({
   email: ""
 });
 const summary = ref("");
-//const professionalSummary = ref("");
 const skills = ref([{description :""}]);
 const resumeSkills = ref({});
 const interests = ref([{description :""}]);
@@ -735,8 +716,7 @@ const AddHeader = (doc, currentY, title) => {
         <v-card-text v-if="comments.length === 0">No comments available</v-card-text>
         <v-card-text v-for="(comment, index) in comments" :key="index" class="my-2">
           <v-card outlined class="p-2">
-            <p><strong>{{ comment.user }}</strong> ({{ comment.date }})</p>
-            <p>{{ comment.text }}</p>
+            <p outline-style: solid>{{ comment.summary }}</p>
           </v-card>
         </v-card-text>
       </v-card>
