@@ -4,9 +4,11 @@ import { useRouter } from "vue-router";
 import Utils from "../config/utils.js";
 import studentServices from "../services/studentServices.js";
 import resumeService from "../services/resumeService.js";
+import commentServices from "../services/commentServices.js";
 
 
 import MenuBar from "../components/MenuBar.vue";
+import { resolveBaseUrl } from "vite";
 
 const router = useRouter();
 const user = ref({});
@@ -17,11 +19,22 @@ const students = ref([
     resumes: ["Resume 1"],
   },
 ]);
+const comments = ref([
+  {
+    summary: "bla bla comment",
+    resumeId: 1,
+    id: 1,
+  }
+]);
+
+const currentComment = ref("here is a comment");
+const currentCommentId = ref(1);
 
 onMounted(() => {
   user.value = Utils.getStore('user');
   fetchStudents();
   //fetchResumes();
+  
 })
 
 const fetchStudents = () => {
@@ -34,7 +47,7 @@ const fetchStudents = () => {
       console.log("Fetched students:", students.value);
     })
     .catch((error) => {
-      console.error("Error fetching links:", error);
+      console.error("Error fetching students:", error);
     });
     fetchResumes();
 };
@@ -45,21 +58,83 @@ const fetchResumes = () => {
   console.log("STUDENTS " + students.value[i].id)
   resumeService.getAllResumes(students.value[i].id)
   .then((response) => {
-    students.value = response.data.map((resume) => ({
-        resumes: resume.value,
-      }));
-      //console.log("Fetched resumes:", students.value[i].resumes.value);
+    // students.value[i].resumes = response.data.map((resume) => ({
+    //     resumes: resume,
+    //   }));
+    students.value[i].resumes = response.data;
+      console.log("Fetched resumes:", students.value[i].resumes[0]);
     })
     .catch((error) => {
-      console.error("Error fetching links:", error);
+      console.error("Error fetching resumes:", error);
     });
 }
+fetchComments();
+};
+
+const fetchComments = () => {
+  commentServices.getAllComments()
+  .then((response) => {
+    comments.value = response.data;
+      console.log("Fetched comments:", comments.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching comments:", error);
+    });
+    
+};
+
+const getCommentFromResume = (studentId, resumeId, id) => {
+  commentServices.getCommentForResume(studentId, resumeId, id)
+  .then((response) => {
+      currentComment.value = response.data.summary;
+      //currentCommentId.value = id;
+      // currentComment = response.data.map((comm) => ({
+      //   summary: comm.summary
+      // }));
+      console.log("id ", id);
+      console.log("Fetched comment:", currentComment.value);
+      //return response.data.value;
+      
+    })
+    .catch((error) => {
+      console.error("Error fetching comments:", error);
+      currentComment.value = "";
+      //create a comment
+    });
+};
+
+const saveComment = (studentId, resumeId, id, data) => {
+  commentServices.updateComment(studentId, resumeId, id, data)
+  .then(() => {
+        console.log("comment updated successfully:", data);
+      })
+      .catch((error) => {
+        console.error("Error updating comment:", error);
+      });
   
 };
 
-
-const viewStudent = (student) => {
-  console.log("View student:", student);
+const savePersonalLink = (index) => {
+  const link = personalLinks.value[index];
+  if (link.id) {
+    // Update an existing link
+    linkServices.updateLink(user.value.studentId, link.id, link)
+      .then(() => {
+        console.log("Link updated successfully:", link);
+      })
+      .catch((error) => {
+        console.error("Error updating link:", error);
+      });
+  } else {
+    linkServices.createLink(user.value.studentId, link) // Send only the specific link
+      .then((response) => {
+        personalLinks.value[index].id = response.data.id; // Update the ID if backend assigns it
+        console.log("Added:", personalLinks.value[index]);
+    })
+      .catch((e) => {
+        message.value =  "An error occurred";
+    });
+  }
 };
 
 const editStudent = (student) => {
@@ -75,6 +150,7 @@ const viewResume = (resume) => {
 };
 
 const addComment = (resume) => {
+  
   console.log("add comment:", resume);
 };
 </script>
@@ -89,23 +165,31 @@ const addComment = (resume) => {
       <td>
       <v-card flat >
         <div v-for="(resume, idx) in student.resumes" :key="idx" class="mb-2">
+          
           <v-btn
             color="primary"
             @click="viewResume(resume)"
             class="mr-2"
           >
-            {{ resume }}
+            Resume {{ resume.id }}
           </v-btn>
 
           
           <v-btn
             color="primary"
-            @click="addComment(resume)"
+            @click="getCommentFromResume(student.id, resume.id, idx+1)"
             class="comment-btn"
             icon="mdi-comment"
           >
-            
           </v-btn>
+          <div class="d-flex">
+            <v-text-field class="comment-box" v-model="currentComment"/>
+            <v-btn class="mr-2"
+            @click="saveComment(student.id, resume.id, currentCommentId, currentComment)">
+              save
+            </v-btn>
+          </div>
+          
         </div>
         
       </v-card>
@@ -140,6 +224,11 @@ const addComment = (resume) => {
 .comment-btn
 {
   margin-left: 15px;
+}
+
+.comment-box
+{
+  width: 400px;
 }
 
 </style>
