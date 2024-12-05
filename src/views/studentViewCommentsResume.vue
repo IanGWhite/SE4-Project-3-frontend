@@ -76,7 +76,7 @@ const CreateResume = async (resumeId) => {
       personalLinks,
       sections,
     });
-    await fetchLinks(resumeId);
+    console.log(resumeName);
     await fetchLinks(resumeId);
     fetchContact();
     fetchSummary(resumeId);
@@ -112,11 +112,11 @@ onMounted(() => {
 });
 
 const thisResumeId = ref({});
-//const resumeName = ref("");
-const resumeName = ref({
-  name: "",
-  summary: "",
-});
+const resumeName = ref({});
+// const resumeName = ref({
+//   name: "",
+//   summary: "",
+// });
 const personalLinks = ref([
   { type: "", link: "" }
 ]);
@@ -717,7 +717,8 @@ const AddHeader = (doc, currentY, title) => {
   <v-app>
     <v-container>
       <v-toolbar color="blue">
-        <v-toolbar-title>{{ resumeName.name }}</v-toolbar-title>
+        <v-toolbar-title class="text-h4">{{ resumeName }}</v-toolbar-title>
+
       </v-toolbar>
       <br />
       
