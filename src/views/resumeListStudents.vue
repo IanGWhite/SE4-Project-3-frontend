@@ -116,4 +116,4 @@ onMounted(() => {
   font-size: 30px; /* Ensure icon size remains prominent */
 }
 
-</style>
+</style> 
