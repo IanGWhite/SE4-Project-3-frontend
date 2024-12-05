@@ -70,4 +70,4 @@ const viewResume = (resume) => {
 .container {
   background-color: #f5e4d7;
 }
-</style>
+</style> 
