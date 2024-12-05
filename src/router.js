@@ -122,9 +122,10 @@ const router = createRouter({
       component: ViewStudentResume,
     },
     {
-      path: "/commentStudentResume",
+      path: "/commentStudentResume/:resumeId",
       name: "commentStudentResume",
-      component: commentStudentResume
+      component: commentStudentResume,
+      props:true,
     },
   ],
 });

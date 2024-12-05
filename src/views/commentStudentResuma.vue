@@ -1,40 +1,60 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import Utils from "../config/utils.js";
-import ResumeService from "../services/resumeService.js";
 import MenuBar from "../components/MenuBar.vue";
+import commentServices from "../services/commentServices.js";
 
+const route = useRoute();
+const router = useRouter();
 const user = Utils.getStore("user");
-const resumeId = 1; // This should be dynamically set, e.g., via route params
+const resumeId = route.params.resumeId; // This should be dynamically set, e.g., via route params
+const studentId = route.params.studentId;
 const pdfUrl = "path/to/resume.pdf"; // URL for the PDF
 
 const comments = ref([]);
-const newComment = ref("");
+const newComment = ref(" ");
 
 const loadComments = () => {
-  ResumeService.getComments(resumeId).then((response) => {
-    comments.value = response.data;
-  }).catch((error) => {
-    console.error("Error loading comments:", error);
-  });
+  
+
+  commentServices.getAllComments(studentId, resumeId)
+  .then((response) => {
+      comments.value = response.data;
+      console.log("retrived comments ", comments.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching comments:", error);
+      currentComment.value = "";
+      //create a comment
+    });
 };
 
 const addComment = () => {
   if (newComment.value.trim()) {
     const comment = {
-      text: newComment.value,
-      user: user.fName + " " + user.lName,
+      summary: newComment.value,
+      // user: user.fName + " " + user.lName,
       date: new Date().toLocaleString()
     };
+
+    commentServices.createComment(studentId, resumeId, comment)
+    .then(() => {
+      comments.value.unshift(comment);
+      newComment.value = "";
+    })
+    .catch((error) => {
+      console.error("Error adding comment:", error);
+    });
     
-    ResumeService.addComment(resumeId, comment)
-      .then(() => {
-        comments.value.unshift(comment); // Add new comment at the top
-        newComment.value = "";
-      })
-      .catch((error) => {
-        console.error("Error adding comment:", error);
-      });
+    // ResumeService.addComment(resumeId, comment)
+    //   .then(() => {
+    //     comments.value.unshift(comment); // Add new comment at the top
+    //     newComment.value = "";
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error adding comment:", error);
+    //   });
   }
 };
 
@@ -60,11 +80,10 @@ onMounted(() => {
       <v-card class="my-4" outlined>
         <v-card-title>Comment</v-card-title>
         <v-card-text>
-          <v-textarea
+          <v-text-field
             v-model="newComment"
             label="Add a comment"
-            rows="3"
-          ></v-textarea>
+          ></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-btn color="blue" @click="addComment">Submit</v-btn>
@@ -78,8 +97,8 @@ onMounted(() => {
         <v-card-text v-if="comments.length === 0">No comments available</v-card-text>
         <v-card-text v-for="(comment, index) in comments" :key="index" class="my-2">
           <v-card outlined class="p-2">
-            <p><strong>{{ comment.user }}</strong> ({{ comment.date }})</p>
-            <p>{{ comment.text }}</p>
+            <!-- <p><strong>{{ comment.user }}</strong> {{ comment.createdAt }}</p> -->
+            <p> {{ comment.summary }}</p>
           </v-card>
         </v-card-text>
       </v-card>

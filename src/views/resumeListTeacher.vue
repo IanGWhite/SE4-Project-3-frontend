@@ -67,7 +67,7 @@ const fetchResumes = () => {
       console.error("Error fetching resumes:", error);
     });
 }
-fetchComments();
+//fetchComments();
 };
 
 const fetchComments = () => {
@@ -102,43 +102,6 @@ const getCommentFromResume = (studentId, resumeId, id) => {
     });
 };
 
-const saveComment = (studentId, resumeId, id, data) => {
-  comments.value.summary = data;
-  comments.value.id = id;
-  comments.value.resumeId = resumeId;
-  commentServices.updateComment(studentId, resumeId, id, comments.value)
-  .then(() => {
-        console.log("comment updated successfully:", comments);
-      })
-      .catch((error) => {
-        console.error("Error updating comment:", error);
-        console.error("Error updating comment:", data);
-      });
-  
-};
-
-const savePersonalLink = (index) => {
-  const link = personalLinks.value[index];
-  if (link.id) {
-    // Update an existing link
-    linkServices.updateLink(user.value.studentId, link.id, link)
-      .then(() => {
-        console.log("Link updated successfully:", link);
-      })
-      .catch((error) => {
-        console.error("Error updating link:", error);
-      });
-  } else {
-    linkServices.createLink(user.value.studentId, link) // Send only the specific link
-      .then((response) => {
-        personalLinks.value[index].id = response.data.id; // Update the ID if backend assigns it
-        console.log("Added:", personalLinks.value[index]);
-    })
-      .catch((e) => {
-        message.value =  "An error occurred";
-    });
-  }
-};
 
 const editStudent = (student) => {
   console.log("Edit student:", student);
@@ -152,9 +115,8 @@ const viewResume = (resume) => {
   console.log("View resume:", resume);
 };
 
-const addComment = (resume) => {
-  
-  console.log("add comment:", resume);
+const addComment = (resumeId, studentId) => {
+  router.push({ name: 'commentStudentResume', params: { resumeId: resumeId, studentId: studentId } });
 };
 </script>
 
@@ -180,18 +142,12 @@ const addComment = (resume) => {
           
           <v-btn
             color="primary"
-            @click="getCommentFromResume(student.id, resume.id, idx+1)"
+            @click="addComment(resume.id, student.id)"
             class="comment-btn"
             icon="mdi-comment"
           >
           </v-btn>
-          <div class="d-flex">
-            <v-text-field class="comment-box" v-model="currentComment"/>
-            <v-btn class="mr-2"
-            @click="saveComment(student.id, resume.id, currentCommentId, currentComment)">
-              save
-            </v-btn>
-          </div>
+          
           
         </div>
         
