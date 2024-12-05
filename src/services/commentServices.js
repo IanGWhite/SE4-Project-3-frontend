@@ -4,16 +4,20 @@ export default {
   getAllComments(studentId, resumeId) {
     return apiClient.get(`/students/${studentId}/resumes/${resumeId}/comments`);
   },
-  getComments(studentId, id) {
+  getCommentForResume(studentId, resumeId, id) {
+    return apiClient.get(`/students/${studentId}/resumes/${resumeId}/comments/${id}`);
+  },
+    getComments(studentId, id) {
     return apiClient.get(`/students/${studentId}/comments/${id}`);
   },
-  createComment(studentId, resumeId, commentId) {
-    return apiClient.post(`/students/${studentId}/${resumeId}/comment/${commentId}`);
+  createComment(studentId,resumeId, data) {
+    return apiClient.post(`/students/${studentId}/resumes/${resumeId}/comments`, data);
   },
-  updateComment(studentId, id, data) {
-    return apiClient.put(`/students/${studentId}/comments/${id}`, data);
+  updateComment(studentId, resumeId, id, data) {
+    return apiClient.put(`/students/${studentId}/resumes/${resumeId}/comments/${id}`, data);
   },
-  deleteComment(studentId, resumeId, id) {
-    return apiClient.delete(`/students/${studentId}/${resumeId}/comments/${id}`);
+  deleteComment(studentId,resumeId, id) {
+    return apiClient.delete(`/students/${studentId}/resumes/${resumeId}/comments/${id}`);
   },
 };
+

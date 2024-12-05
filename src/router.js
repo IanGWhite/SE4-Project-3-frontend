@@ -19,6 +19,7 @@ import StudentHome from "./views/studentHome.vue";
 import TeacherHome from "./views/teacherHome.vue";
 import ViewStudentResume from "./views/viewStudentResumeList.vue";
 import commentStudentResume from "./views/commentStudentResume.vue";
+import ResumeListTeacher from "./views/resumeListTeacher.vue";
 import studentViewCommentsResume from "./views/studentViewCommentsResume.vue";
 
 const router = createRouter({
@@ -102,6 +103,11 @@ const router = createRouter({
       component: ResumeListStudents,
     },
     {
+      path: "/ResumeListTeacher",
+      name: "ResumeListTeacher",
+      component: ResumeListTeacher,
+    },
+    {
       path: "/StudentHome",
       name: "StudentHome",
       component: StudentHome,
@@ -117,9 +123,10 @@ const router = createRouter({
       component: ViewStudentResume,
     },
     {
-      path: "/commentStudentResume",
+      path: "/commentStudentResume/:resumeId",
       name: "commentStudentResume",
-      component: commentStudentResume
+      component: commentStudentResume,
+      props:true,
     },
     {
       path: "/studentViewCommentsResume/:id",
