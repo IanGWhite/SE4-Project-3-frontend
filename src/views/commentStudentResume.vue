@@ -99,6 +99,7 @@ onMounted(() => {
           <v-card outlined class="p-2">
             <!-- <p><strong>{{ comment.user }}</strong> {{ comment.createdAt }}</p> -->
             <p> {{ comment.summary }}</p>
+
           </v-card>
         </v-card-text>
       </v-card>

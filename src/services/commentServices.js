@@ -7,6 +7,9 @@ export default {
   getCommentForResume(studentId, resumeId, id) {
     return apiClient.get(`/students/${studentId}/resumes/${resumeId}/comments/${id}`);
   },
+    getComments(studentId, id) {
+    return apiClient.get(`/students/${studentId}/comments/${id}`);
+  },
   createComment(studentId,resumeId, data) {
     return apiClient.post(`/students/${studentId}/resumes/${resumeId}/comments`, data);
   },
@@ -17,3 +20,4 @@ export default {
     return apiClient.delete(`/students/${studentId}/resumes/${resumeId}/comments/${id}`);
   },
 };
+
