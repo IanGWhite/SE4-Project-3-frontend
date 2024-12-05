@@ -1,19 +1,19 @@
 import apiClient from "./services.js";
 
 export default {
-  getAllResumes(studentId) {
-    return apiClient.get(`/students/${studentId}/resumes`);
+  getAllResumes(tutorialId) {
+    return apiClient.get(`/tutorials/${tutorialId}/resumes`);
   },
-  getResumes(studentId, id) {
-    return apiClient.get(`/students/${studentId}/resumes/${id}`);
+  getResumes(tutorialId, id) {
+    return apiClient.get(`/tutorials/${tutorialId}/resumes/${id}`);
   },
-  createResume(studentId, data) {
-    return apiClient.post(`/students/${studentId}/resumes`, data);
+  createResume(tutorialId, data) {
+    return apiClient.post(`/tutorials/${tutorialId}/resumes`, data);
   },
-  updateResume(studentId, id, data) {
-    return apiClient.put(`/students/${studentId}/resumes/${id}`, data);
+  updateResume(tutorialId, id, data) {
+    return apiClient.put(`/tutorials/${tutorialId}/resumes/${id}`, data);
   },
-  deleteResume(studentId, id) {
-    return apiClient.delete(`/students/${studentId}/resumes/${id}`);
+  deleteResume(tutorialId, id) {
+    return apiClient.delete(`/tutorials/${tutorialId}/resumes/${id}`);
   },
 };

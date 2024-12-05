@@ -10,25 +10,13 @@ import experienceServices from "../services/experienceServices";
 import interestServices from "../services/interestServices.js";
 import projectServices from "../services/projectServices.js";
 import awardServices from "../services/awardServices.js";
+import MenuBar from "../components/MenuBar.vue";
 import jsPDF from 'jspdf';
 import Utils from "../config/utils.js";
-import resumeExperienceServices from "../services/resumeExperienceServices.js";
-import resumeEducationServices from "../services/resumeEducationServices.js";
-import resumeLinkServices from "../services/resumeLinkServices.js";
-import resumeAwardServices from "../services/resumeAwardServices.js";
-import resumeInterestServices from "../services/resumeInterestServices.js";
-import resumeProjectServices from "../services/resumeProjectServices.js";
-import resumeSkillServices from "../services/resumeSkillServices.js";
-import resumeService from "../services/resumeService.js";
 
 const user = ref({});
-const thisResumeId = ref({});
-//const resumeName = ref("");
-const resumeData = ref({
-  name: "",
-  summary: "",
-});
-const personalLinks = ref({ type: "", link: "" });
+const resumeName = ref("");
+const personalLinks = ref([{ type: "", link: "" }]);
 const contactInfo = ref({
   firstName: "",
   lastName: "",
@@ -36,7 +24,7 @@ const contactInfo = ref({
   state: "",
   email: ""
 });
-//const professionalSummary = ref("");
+const professionalSummary = ref("");
 const skills = ref([{description :""}]);
 const interests = ref([{description :""}]);
 const educations = ref({
@@ -75,7 +63,7 @@ const projects = ref({
 
 
 const sections = ref({
-  personalLink: [{ name: "link 1", checked: true }],
+  personalLink: [],
   education: [{ name: "School 1", checked: true }],
   experience: [{ name: "Company 1", checked: true }],
   projects: [{ name: "Project 1", checked: true }],
@@ -211,23 +199,15 @@ const fetchAward= () => {
 };
 
 const saveResume = () => {
-  try {
-    console.log("Resume data being saved:", {
-      resumeData,
-      personalLinks,
-      sections,
-    });
-
-    // Call save function and handle any issues
-    saveResumeToDatabase();
-
-    // Generate resume logic
-    generateResume1();
-  } catch (error) {
-    console.error("Error occurred in saveResume:", error);
-  }
+  console.log("Resume saved:", {
+    resumeName,
+    personalLinks,
+    professionalSummary,
+    sections
+  });
+  
+  generateResume1();
 };
-
 
 const font = "times";
 const generateResume1 = () => {
@@ -287,7 +267,7 @@ const AddSummary = (doc, currentY) => {
   var pageWidth = doc.internal.pageSize.getWidth(); 
   doc.setFontSize(12);
   doc.setFont(font, "normal");
-  var splitSummary = doc.splitTextToSize(resumeData.value.summary, pageWidth-20);
+  var splitSummary = doc.splitTextToSize(professionalSummary.value, pageWidth-20);
   doc.text(splitSummary, 10, currentY, {align: "left"});
   currentY += doc.getTextDimensions(splitSummary).h;
   return currentY;
@@ -435,177 +415,6 @@ const AddHeader = (doc, currentY, title) => {
   doc.setFont(font, "normal");
   return currentY;
 }
-
-const saveResumeToDatabase = () =>{
-
-  resumeService.createResume(user.value.studentId, resumeData.value)
-    .then((response) => {
-      thisResumeId.value = response.data.id 
-      console.log(thisResumeId.value);
-      console.log("the resume was created");
-      saveExperienceDatabase();
-      saveEducationDatabase();
-      saveProjectDatabase();
-      saveLinkDatabase();
-      saveAwardDatabase();
-      saveInterestDatabase();
-      saveSkillDatabase();
-      console.log("it past the functions");
-    })
-    .catch((e) => {
-      console.log("An error occurred");
-      //console.log(thisResumeId);
-    });
-    console.log(thisResumeId.value);
-}
-
-const saveExperienceDatabase = () =>{
-  console.log("it called the experience function");
-  for(let i=0; i<sections.value.experience.length; i++)
-    {
-      var exp = sections.value.experience[i];
-      if(exp.checked)
-      {
-        console.log("student id " + user.value.studentId);
-        console.log("Resume id " + thisResumeId.value);
-        console.log("experience id " + experiences.value[i].id );
-        resumeExperienceServices.createResumeExperience(user.value.studentId, thisResumeId.value, experiences.value[i].id ) 
-        .then(() => {
-          console.log("ResumeExperience created successfully");
-        })
-        .catch((e) => {
-          console.log("An error occurred");
-        });
-      }
-    }
-};
-
-const saveEducationDatabase = () =>{
-  console.log("it called the educaton function");
-  for(let i=0; i<sections.value.education.length; i++)
-    {
-      var exp = sections.value.education[i];
-      if(exp.checked)
-      {
-        console.log("student id " + user.value.studentId);
-        console.log("Resume id " + thisResumeId.value);
-        console.log("education id " + educations.value[i].id );
-        resumeEducationServices.createResumeEducation(user.value.studentId, thisResumeId.value, educations.value[i].id ) 
-        .then(() => {
-          console.log("ResumeEducation created successfully");
-        })
-        .catch((e) => {
-          console.log("An error occurred");
-        });
-      }
-    }
-};
-
-const saveProjectDatabase = () =>{
-  console.log("it called the project function");
-  for(let i=0; i<sections.value.projects.length; i++)
-    {
-      var exp = sections.value.projects[i];
-      if(exp.checked)
-      {
-        console.log("student id " + user.value.studentId);
-        console.log("Resume id " + thisResumeId.value);
-        console.log("project id " + projects.value[i].id );
-        resumeProjectServices.createResumeProject(user.value.studentId, thisResumeId.value, projects.value[i].id ) 
-        .then(() => {
-          console.log("ResumeProject created successfully");
-        })
-        .catch((e) => {
-          console.log("An error occurred");
-        });
-      }
-    }
-};
-
-const saveLinkDatabase = () =>{
-  console.log("it called the link function");
-  for(let i=0; i<sections.value.personalLink.length; i++)
-    {
-      var exp = sections.value.personalLink[i];
-      if(exp.checked)
-      {
-        console.log("student id " + user.value.studentId);
-        console.log("Resume id " + thisResumeId.value);
-        console.log("link id " + personalLinks.value[i].id );
-        resumeLinkServices.createResumeLink(user.value.studentId, thisResumeId.value, personalLinks.value[i].id ) 
-        .then(() => {
-          console.log("ResumeLink created successfully");
-        })
-        .catch((e) => {
-          console.log("An error occurred");
-        });
-      }
-    }
-};
-
-const saveAwardDatabase = () =>{
-  console.log("it called the award function");
-  for(let i=0; i<sections.value.awards.length; i++)
-    {
-      var exp = sections.value.awards[i];
-      if(exp.checked)
-      {
-        console.log("student id " + user.value.studentId);
-        console.log("Resume id " + thisResumeId.value);
-        console.log("award id " + awards.value[i].id );
-        resumeAwardServices.createResumeAward(user.value.studentId, thisResumeId.value, awards.value[i].id ) 
-        .then(() => {
-          console.log("ResumeAward created successfully");
-        })
-        .catch((e) => {
-          console.log("An error occurred");
-        });
-      }
-    }
-};
-
-const saveInterestDatabase = () =>{
-  console.log("it called the interest function");
-  for(let i=0; i<sections.value.interests.length; i++)
-    {
-      var exp = sections.value.interests[i];
-      if(exp.checked)
-      {
-        console.log("student id " + user.value.studentId);
-        console.log("Resume id " + thisResumeId.value);
-        console.log("interest id " + interests.value[i].id );
-        resumeInterestServices.createResumeInterest(user.value.studentId, thisResumeId.value, interests.value[i].id ) 
-        .then(() => {
-          console.log("ResumeInterest created successfully");
-        })
-        .catch((e) => {
-          console.log("An error occurred");
-        });
-      }
-    }
-};
-
-const saveSkillDatabase = () =>{
-  console.log("it called the skill function");
-  for(let i=0; i<sections.value.skills.length; i++)
-    {
-      var exp = sections.value.skills[i];
-      if(exp.checked)
-      {
-        console.log("student id " + user.value.studentId);
-        console.log("Resume id " + thisResumeId.value);
-        console.log("skill id " + skills.value[i].id );
-        resumeSkillServices.createResumeSkill(user.value.studentId, thisResumeId.value, skills.value[i].id ) 
-        .then(() => {
-          console.log("ResumeSkill created successfully");
-        })
-        .catch((e) => {
-          console.log("An error occurred");
-        });
-      }
-    }
-};
-
 </script>
 
 <template>
@@ -617,8 +426,8 @@ const saveSkillDatabase = () =>{
         </v-card-title>
         <v-card-text>
           <v-text-field
-            v-model="resumeData.name"
-            label="name"
+            v-model="resumeName"
+            label="Resume Name"
             outlined
             dense
           ></v-text-field>
@@ -630,8 +439,8 @@ const saveSkillDatabase = () =>{
         <v-card-title>Professional Summary</v-card-title>
         <v-card-text>
           <v-textarea
-            v-model="resumeData.summary"
-            label="summary"
+            v-model="professionalSummary"
+            label="Professional Summary"
             outlined
             dense
           ></v-textarea>
