@@ -18,7 +18,7 @@ import ResumeListStudents from "./views/resumeListStudents.vue";
 import StudentHome from "./views/studentHome.vue";
 import TeacherHome from "./views/teacherHome.vue";
 import ViewStudentResume from "./views/viewStudentResumeList.vue";
-import commentStudentResume from "./views/commentStudentResuma.vue";
+import commentStudentResume from "./views/commentStudentResume.vue";
 import ResumeListTeacher from "./views/resumeListTeacher.vue";
 
 const router = createRouter({
