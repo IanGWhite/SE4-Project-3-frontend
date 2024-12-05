@@ -35,7 +35,7 @@ const editResume = (resume) => {
             <v-expansion-panel-title>
               {{ resume.title }}
               <v-spacer></v-spacer>
-              <v-btn icon @click.stop="editResume(resume)">
+              <v-btn icon @click="editResume(resume)">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
               <v-btn icon @click.stop="deleteResume(index)">

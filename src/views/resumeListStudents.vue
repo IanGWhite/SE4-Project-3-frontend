@@ -24,9 +24,7 @@ const addNewResume = () => {
   router.push({ name: 'CreateResume' });
 };
 
-const editResume = (resume) => {
-  console.log("Editing resume:", resume);
-};
+const editResume = (myResume) => router.push({ name: 'EditResume', params: { id: myResume.id } });
 
 const deleteResume =  (resumeId) => {
   if (confirm("Are you sure you want to delete this resume?")) {

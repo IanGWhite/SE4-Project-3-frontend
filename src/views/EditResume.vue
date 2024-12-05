@@ -32,6 +32,7 @@ const resumeData = ref({
   summary: "",
 });
 const personalLinks = ref({ type: "", link: "" });
+const resumeLinks = ref({linkId: 0});
 const contactInfo = ref({
   firstName: "",
   lastName: "",
@@ -87,12 +88,13 @@ const sections = ref({
   awards: [{ name: "Award 1", checked: true }],
 });
 
-const getResume = async (id) => {
+const getResume = async (resumeId) => {
   try {
-    const response = await ResumeServices.getResumes(user.value.studentId, id);
+    const response = await resumeService.getResumes(user.value.studentId, resumeId);
     resumeData.value = response.data;
+    fetchResumeLinks();
   } catch (error) {
-    console.error('Failed to retrieve project data:');
+    console.error('Failed to retrieve resume data:');
   }
 };
 
@@ -104,13 +106,13 @@ const addSectionItem = (sectionKey) => {
 onMounted(() => {
   user.value = Utils.getStore('user')
   const resumeId = route.params.id;
+  console.log("resumeId " + resumeId);
     if (resumeId) {
       getResume(resumeId);
     } else {
       console.error('No course ID provided in route');
     }
   //console.log(user.value)
-  fetchLinks();
   fetchSkills();
   fetchContact();
   fetchEducation();
@@ -118,21 +120,48 @@ onMounted(() => {
   fetchInterests();
   fetchProject();
   fetchAward();
+  for (let index = 0; index < resumeLinks; ++index) {
+      console.log("Checking");
+      for ( let lindex = 0; lindex < personalLinks.length; ++lindex){
+        if(resumeLinks[index].linkId == personalLinks[lindex].id){
+        sections.value.personalLink[lindex].checked = true;
+        console.log("checked");
+        }
+      }
+      }
+    console.log(resumeLinks.includes);
 })
 
 // Fetch links from the database
+const fetchResumeLinks = () => {
+  resumeLinkServices.getAllResumeLinks(user.value.studentId,resumeData.value.id)
+    .then((response) => {
+      //sections.value.personalLink = response.data.map((link) => ({
+        //name: link.link,
+        
+      //})); // Assuming the backend returns an array of links
+      resumeLinks.value = response.data;
+      console.log("Fetched Resume links:", resumeLinks.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching resume links:", error);
+    });
+    fetchLinks();
+};
 const fetchLinks = () => {
   linkServices.getAllLinks(user.value.studentId)
     .then((response) => {
-      sections.value.personalLink = response.data.map((link) => ({
-        name: link.link,
-      })); // Assuming the backend returns an array of links
+      sections.value.personalLink = response.data.map(
+        (link) => ({name: link.link,})
+    ); // Assuming the backend returns an array of links
       personalLinks.value = response.data;
-      console.log("Fetched links:", personalLinks.value[0].link);
+      console.log("Fetched links:", personalLinks.value);
     })
     .catch((error) => {
       console.error("Error fetching links:", error);
     });
+
+
 };
 const fetchContact = () => {
   contactServices.getAllContacts(user.value.studentId)
@@ -457,7 +486,7 @@ const AddHeader = (doc, currentY, title) => {
 
 const saveResumeToDatabase = () =>{
 
-  resumeService.createResume(user.value.studentId, resumeData.value)
+  resumeService.updateResume(user.value.studentId, resumeData.id, resumeData.value)
     .then((response) => {
       thisResumeId.value = response.data.id 
       console.log(thisResumeId.value);
