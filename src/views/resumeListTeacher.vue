@@ -102,19 +102,6 @@ const getCommentFromResume = (studentId, resumeId, id) => {
     });
 };
 
-
-const editStudent = (student) => {
-  console.log("Edit student:", student);
-};
-
-const deleteStudent = (student) => {
-  console.log("Delete student:", student);
-};
-
-const viewResume = (resume) => {
-  console.log("View resume:", resume);
-};
-
 const addComment = (resumeId, studentId) => {
   router.push({ name: 'commentStudentResume', params: { resumeId: resumeId, studentId: studentId } });
 };
@@ -131,17 +118,11 @@ const addComment = (resumeId, studentId) => {
       <v-card flat >
         <div v-for="(resume, idx) in student.resumes" :key="idx" class="mb-2">
           
+          <div class="resume-text" color: blue>
+            {{ resume.name }}
+          </div>
           <v-btn
-            color="primary"
-            @click="viewResume(resume)"
-            class="mr-2"
-          >
-            Resume {{ resume.id }}
-          </v-btn>
-
-          
-          <v-btn
-            color="primary"
+            color="blue"
             @click="addComment(resume.id, student.id)"
             class="comment-btn"
             icon="mdi-comment"
@@ -188,6 +169,13 @@ const addComment = (resumeId, studentId) => {
 .comment-box
 {
   width: 400px;
+}
+.resume-text {
+  display: inline-block; /* Ensures the container grows with the text */
+  font-size: 16px; /* Base font size */
+  font-weight: bold; /* Bold text for emphasis */
+  color: "blue"; /* Matches Vuetify's primary color */
+  word-wrap: break-word; /* Ensures text wraps if it's too long */
 }
 
 </style>
