@@ -123,7 +123,7 @@ const router = createRouter({
       component: ViewStudentResume,
     },
     {
-      path: "/commentStudentResume/:resumeId",
+      path: "/commentStudentResume/:id",
       name: "commentStudentResume",
       component: commentStudentResume,
       props:true,

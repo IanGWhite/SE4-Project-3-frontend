@@ -103,7 +103,7 @@ const getCommentFromResume = (studentId, resumeId, id) => {
 };
 
 const addComment = (resumeId, studentId) => {
-  router.push({ name: 'commentStudentResume', params: { resumeId: resumeId, studentId: studentId } });
+  router.push({ name: 'commentStudentResume', params: { id: resumeId } });
 };
 </script>
 

@@ -24,11 +24,26 @@ import resumeService from "../services/resumeService.js";
 
 const route = useRoute();
 const router = useRouter();
-const user = Utils.getStore("user");
-const resumeId = route.params.resumeId; // This should be dynamically set, e.g., via route params
-const studentId = route.params.studentId;
+const user = ref({});
+const resumeId = ref("");
 const pdfUrl = "path/to/resume.pdf"; // URL for the PDF
 const pdfBlobUrl = ref(null);
+
+onMounted(() => {
+  user.value = Utils.getStore('user');
+  resumeId.value = route.params.id;
+  console.log(resumeId.value);
+  console.log(route.params.id);
+  console.log(user.value);
+  console.log(resumeId.value);
+  
+  CreateResume();
+      if (resumeId.value) {
+        loadComments();
+      } else {
+        console.error('No resume ID provided in route');
+      }
+});
 
 const comments = ref([]);
 const newComment = ref(" ");
@@ -36,7 +51,7 @@ const newComment = ref(" ");
 const loadComments = () => {
   
 
-  commentServices.getAllComments(studentId, resumeId)
+  commentServices.getAllComments(user.value.studentId, resumeId.value)
   .then((response) => {
       comments.value = response.data;
       console.log("retrived comments ", comments.value);
@@ -56,7 +71,7 @@ const addComment = () => {
       date: new Date().toLocaleString()
     };
 
-    commentServices.createComment(studentId, resumeId, comment)
+    commentServices.createComment(user.value.studentId, resumeId.value, comment)
     .then(() => {
       comments.value.unshift(comment);
       newComment.value = "";
@@ -68,7 +83,7 @@ const addComment = () => {
 };
 
 const CreateResume = async () => {
-  //thisResumeId = resumeId;
+  //thisResumeId = resumeId.value;
   try {
     console.log("Resume data being saved:", {
       resumeName,
@@ -76,14 +91,14 @@ const CreateResume = async () => {
       sections,
     });
     console.log(resumeName);
-    await fetchLinks(resumeId);
+    await fetchLinks();
     fetchContact();
-    fetchSummary(resumeId);
-    await fetchSkills(resumeId);
-    await fetchInterests(resumeId);
-    await fetchEducations(resumeId);
-    await fetchAwards(resumeId);
-    await fetchExperiences(resumeId);
+    fetchSummary();
+    await fetchSkills();
+    await fetchInterests();
+    await fetchEducations();
+    await fetchAwards();
+    await fetchExperiences();
     // Generate resume logic
   } catch (error) {
     console.error("Error occurred in getting the data:", error);
@@ -96,21 +111,7 @@ const CreateResume = async () => {
   }
 };
 
-onMounted(() => {
-  const resumeId = route.params.id;
-  user.value = Utils.getStore('user');
-  console.log(user.value);
-  console.log(resumeId);
-  
-  CreateResume(resumeId);
-      if (resumeId) {
-        loadComments(resumeId);
-      } else {
-        console.error('No resume ID provided in route');
-      }
-});
 
-const thisResumeId = ref({});
 const resumeName = ref({});
 const personalLinks = ref([
   { type: "", link: "" }
@@ -181,10 +182,10 @@ const addSectionItem = (sectionKey) => {
   sections.value[sectionKey].push({ name: "", checked: false });
 };
 
-const fetchLinks = async (resumeId) => {
+const fetchLinks = async () => {
   try {
     // Fetch all resume links
-    const resumeResponse = await resumeLinkServices.getAllResumeLinks(user.value.studentId, resumeId);
+    const resumeResponse = await resumeLinkServices.getAllResumeLinks(user.value.studentId, resumeId.value);
     resumeLinks.value = resumeResponse.data;
 
     // Fetch details for each link in parallel
@@ -228,8 +229,8 @@ const fetchContact = () => {
     });
 };
 
-const fetchSummary = (resumeId) => {
-  resumeService.getResumes(user.value.studentId, resumeId)
+const fetchSummary = () => {
+  resumeService.getResumes(user.value.studentId, resumeId.value)
     .then((response) => {
       console.log("API Response:", response);  // Check the full response structure
       if (response.data && response.data.summary) {
@@ -247,10 +248,10 @@ const fetchSummary = (resumeId) => {
 
 
 
-const fetchSkills = async (resumeId) => {
+const fetchSkills = async () => {
   try {
     // Fetch all resume skills
-    const resumeResponse = await resumeSkillServices.getAllResumeSkills(user.value.studentId, resumeId);
+    const resumeResponse = await resumeSkillServices.getAllResumeSkills(user.value.studentId, resumeId.value);
     resumeSkills.value = resumeResponse.data || []; // Default to an empty array if no data
 
     if (!Array.isArray(resumeSkills.value)) {
@@ -288,10 +289,10 @@ const fetchSkills = async (resumeId) => {
 };
 
 
-const fetchEducations = async (resumeId) => {
+const fetchEducations = async () => {
     try {
       // Fetch all resume educations
-      const resumeResponse = await resumeEducationServices.getAllResumeEducations(user.value.studentId, resumeId);
+      const resumeResponse = await resumeEducationServices.getAllResumeEducations(user.value.studentId, resumeId.value);
       resumeEducations.value = resumeResponse.data || []; // Default to an empty array if no data
   
       if (!Array.isArray(resumeEducations.value)) {
@@ -328,10 +329,10 @@ const fetchEducations = async (resumeId) => {
     }
   };
 
-  const fetchExperiences = async (resumeId) => {
+  const fetchExperiences = async () => {
     try {
       // Fetch all resume experiences
-      const resumeResponse = await resumeExperienceServices.getAllResumeExperiences(user.value.studentId, resumeId);
+      const resumeResponse = await resumeExperienceServices.getAllResumeExperiences(user.value.studentId, resumeId.value);
       resumeExperiences.value = resumeResponse.data || []; // Default to an empty array if no data
   
       // if (!Array.isArray(resumeExperiences.value)) {
@@ -369,10 +370,10 @@ const fetchEducations = async (resumeId) => {
     }
   };
 
-const fetchInterests = async (resumeId) => {
+const fetchInterests = async () => {
   try {
     // Fetch all resume interests
-    const resumeResponse = await resumeInterestServices.getAllResumeInterests(user.value.studentId, resumeId);
+    const resumeResponse = await resumeInterestServices.getAllResumeInterests(user.value.studentId, resumeId.value);
     resumeInterests.value = resumeResponse.data || []; // Default to an empty array if no data
 
     if (!Array.isArray(resumeInterests.value)) {
@@ -431,10 +432,10 @@ const fetchProject= () => {
       console.error("Error fetching Projects:", error);
     });
 };
-const fetchAwards = async (resumeId) => {
+const fetchAwards = async () => {
     try {
       // Fetch all resume awards
-      const resumeResponse = await resumeAwardServices.getAllResumeAwards(user.value.studentId, resumeId);
+      const resumeResponse = await resumeAwardServices.getAllResumeAwards(user.value.studentId, resumeId.value);
       resumeAwards.value = resumeResponse.data || []; // Default to an empty array if no data
   
       if (!Array.isArray(resumeAwards.value)) {
