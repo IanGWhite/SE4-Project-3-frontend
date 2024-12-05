@@ -8,7 +8,6 @@ import commentServices from "../services/commentServices.js";
 
 
 import MenuBar from "../components/MenuBar.vue";
-import { resolveBaseUrl } from "vite";
 
 const router = useRouter();
 const user = ref({});
@@ -104,12 +103,16 @@ const getCommentFromResume = (studentId, resumeId, id) => {
 };
 
 const saveComment = (studentId, resumeId, id, data) => {
-  commentServices.updateComment(studentId, resumeId, id, data)
+  comments.value.summary = data;
+  comments.value.id = id;
+  comments.value.resumeId = resumeId;
+  commentServices.updateComment(studentId, resumeId, id, comments.value)
   .then(() => {
-        console.log("comment updated successfully:", data);
+        console.log("comment updated successfully:", comments);
       })
       .catch((error) => {
         console.error("Error updating comment:", error);
+        console.error("Error updating comment:", data);
       });
   
 };
