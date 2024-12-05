@@ -1,67 +1,99 @@
 <script setup>
-import { ref } from "vue";
-import MenuBar from "../components/MenuBar.vue";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import resumeService from "../services/resumeService";
+import Utils from "../config/utils.js";
 
-const students = ref([
-  {
-    name: "Student 1",
-    resumes: ["Resume 1"],
-  },
-  {
-    name: "Student 2",
-    resumes: ["Resume 1", "Resume 2"],
-  },
-]);
+const resumes = ref([]);
+const user = ref({});
+const router = useRouter();
 
-const viewStudent = (student) => {
-  console.log("View student:", student);
+const fetchResumes = () => {
+  resumeService.getAllResumes(user.value.studentId)
+    .then((response) => {
+      resumes.value = response.data; // Assuming the backend returns an array of resumes
+      console.log("Fetched resumes:", resumes.value);
+    })
+    .catch((error) => {
+      console.error("Error fetching resumes:", error);
+    });
 };
 
-const editStudent = (student) => {
-  console.log("Edit student:", student);
+const addNewResume = () => {
+  console.log("Add a new resume");
+  router.push({ name: 'CreateResume' });
 };
 
-const deleteStudent = (student) => {
-  console.log("Delete student:", student);
+const editResume = (resume) => {
+  console.log("Editing resume:", resume);
 };
 
-const viewResume = (resume) => {
-  console.log("View resume:", resume);
+const deleteResume =  (resumeId) => {
+  if (confirm("Are you sure you want to delete this resume?")) {
+      console.log(resumeId);
+      resumeService.deleteResume(user.value.studentId, resumeId).then( () => {
+        console.log("Resume deleted:", resumeId);
+        fetchResumes();
+      })
+    .catch ((error) => {
+      console.error("Error deleting resume:", error);
+    })
+  }
 };
+
+
+onMounted(() => {
+  user.value = Utils.getStore('user');
+  console.log(user.value);
+  fetchResumes();
+});
 </script>
 
 <template>
   <v-container>
     <v-card class="mt-3">
-      <v-card-title>Students</v-card-title>
+      <v-card-title>Resumes</v-card-title>
       <v-divider></v-divider>
       <v-card-text>
         <v-accordion>
-          <template v-for="(student, index) in students" :key="index">
-            <v-accordion-item>
-              <template #header>
-                <div class="d-flex align-center">
-                  <div>{{ student.name }}</div>
-                  <div class="ml-auto d-flex">
-                  </div>
-                </div>
-              </template>
-
+          <template v-if="resumes.length > 0">
+            <template v-for="(resume, index) in resumes" :key="index">
               <v-card flat class="pt-2">
-                <div v-for="(resume, idx) in student.resumes" :key="idx" class="mb-2">
-                  <v-btn
-                    color="primary"
-                    @click="viewResume(resume)"
-                    class="mr-2"
-                  >
-                    {{ resume }}
-                  </v-btn>
-                </div>
+                <v-row align="center">
+                  <v-col cols="8">
+                    <span class="resume-name">{{ resume.name }}</span>
+                  </v-col>
+                  <v-col cols="4" class="text-right">
+                    <v-btn icon color="blue" @click="downloadResume(resume)">
+                      <v-icon>mdi-download</v-icon>
+                    </v-btn>
+                    <v-btn icon color="blue" @click="editResume(resume)">
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn icon color="blue" @click="deleteResume(resume.id)">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </v-col>
+                </v-row>
               </v-card>
-            </v-accordion-item>
+              <v-divider v-if="index < resumes.length - 1"></v-divider>
+            </template>
+          </template>
+          <template v-else>
+            <p>No resumes available. Add a new one!</p>
           </template>
         </v-accordion>
       </v-card-text>
+      <v-card-actions class="text-right mt-5">
+        <v-btn
+          class="add-resume-button"
+          color="blue"
+          @click="addNewResume"
+        >
+          <v-icon class="add-icon">mdi-plus</v-icon>
+        </v-btn>
+      </v-card-actions>
+
     </v-card>
   </v-container>
 </template>
@@ -70,4 +102,4 @@ const viewResume = (resume) => {
 .container {
   background-color: #f5e4d7;
 }
-</style>
+</style> 
