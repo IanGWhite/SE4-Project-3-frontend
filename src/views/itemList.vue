@@ -12,7 +12,7 @@ import awardServices from "../services/awardServices.js";
 import Utils from "../config/utils.js";
 
 
-const router = useRouter();
+const router = useRouter(); 
 const user = ref({});
 const contactInfo = ref({
   firstName: "",

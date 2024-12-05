@@ -23,6 +23,7 @@ import resumeService from "../services/resumeService.js";
 
 const user = ref({});
 const thisResumeId = ref({});
+const router = useRouter();
 //const resumeName = ref("");
 const resumeData = ref({
   name: "",
@@ -223,6 +224,7 @@ const saveResume = () => {
 
     // Generate resume logic
     generateResume1();
+    router.push({ name: 'ResumeListStudents' });
   } catch (error) {
     console.error("Error occurred in saveResume:", error);
   }
